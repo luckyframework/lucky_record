@@ -143,7 +143,7 @@ abstract class LuckyRecord::Form(T)
 
   abstract def after_validate
 
-  def self.save(params)
+  def self.save(params, **extra_params)
     form = new(params)
     if form.save
       yield form, form.record
@@ -152,7 +152,7 @@ abstract class LuckyRecord::Form(T)
     end
   end
 
-  def self.update(record, with params)
+  def self.update(record, params, **extra_params)
     form = new(record, params)
     if form.save
       yield form, form.record.not_nil!

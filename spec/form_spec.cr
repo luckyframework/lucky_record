@@ -217,6 +217,14 @@ describe "LuckyRecord::Form" do
         end
       end
     end
+
+    it "can accept extra params" do
+      params = {"joined_at" => now_as_string, "age" => "30"}
+      UserForm.save params, name: "New Name" do |form, record|
+        form.save_succeeded?.should be_true
+        record.is_a?(User).should be_true
+      end
+    end
   end
 
   describe ".update" do
@@ -225,7 +233,7 @@ describe "LuckyRecord::Form" do
         create_user(name: "Old Name")
         user = UserQuery.new.first
         params = {"name" => "New Name"}
-        UserForm.update user, with: params do |form, record|
+        UserForm.update user, params do |form, record|
           form.save_succeeded?.should be_true
           record.name.should eq "New Name"
         end
@@ -237,10 +245,21 @@ describe "LuckyRecord::Form" do
         create_user(name: "Old Name")
         user = UserQuery.new.first
         params = {"name" => ""}
-        UserForm.update user, with: params do |form, record|
+        UserForm.update user, params do |form, record|
           form.save_failed?.should be_true
           record.name.should eq "Old Name"
         end
+      end
+    end
+
+    it "can accept extra params" do
+      create_user(name: "Old Name")
+      user = UserQuery.new.first
+      params = {"name" => "New Name"}
+      UserForm.update user, params, age: 5 do |form, record|
+        form.save_succeeded?.should be_true
+        record.name.should eq "New Name"
+        record.age.should eq 5
       end
     end
   end
