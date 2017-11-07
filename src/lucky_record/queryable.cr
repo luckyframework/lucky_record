@@ -29,7 +29,7 @@ module LuckyRecord::Queryable(T)
   end
 
   def find(id)
-    id(id).limit(1).first
+    id(id).limit(1).first? || raise RecordNotFound.new
   end
 
   def first

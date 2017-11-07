@@ -29,6 +29,12 @@ describe LuckyRecord::Query do
 
       UserQuery.new.find(user.id).should eq user
     end
+
+    it "raises RecordNotFound if no record is found with the given id" do
+      expect_raises(RecordNotFound, "") do
+        UserQuery.new.find(1)
+      end
+    end
   end
 
   describe "#where" do
