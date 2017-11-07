@@ -1,6 +1,5 @@
 module LuckyRecord::Queryable(T)
   include Enumerable(T)
-
   @query : LuckyRecord::QueryBuilder?
 
   macro included
@@ -29,7 +28,8 @@ module LuckyRecord::Queryable(T)
   end
 
   def find(id)
-    id(id).limit(1).first? || raise RecordNotFound.new
+    id(id).limit(1).first? || raise RecordNotFoundError.new(model: @@table_name, id: id)
+
   end
 
   def first

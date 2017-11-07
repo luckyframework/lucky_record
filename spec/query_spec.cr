@@ -31,7 +31,7 @@ describe LuckyRecord::Query do
     end
 
     it "raises RecordNotFound if no record is found with the given id" do
-      expect_raises(RecordNotFound, "") do
+      expect_raises(LuckyRecord::RecordNotFoundError, "") do
         UserQuery.new.find(1)
       end
     end
