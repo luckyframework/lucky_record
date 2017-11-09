@@ -1,7 +1,7 @@
 class LuckyRecord::BoolType < LuckyRecord::Type
   alias BaseType = Bool
 
-  def self.cast(value : String)
+  def self.parse(value : String)
     if %w(true 1).includes? value
       SuccessfulCast(Bool).new true
     elsif %w(false 0).includes? value
@@ -11,7 +11,7 @@ class LuckyRecord::BoolType < LuckyRecord::Type
     end
   end
 
-  def self.cast(value : Bool)
+  def self.parse(value : Bool)
     SuccessfulCast(Bool).new value
   end
 
