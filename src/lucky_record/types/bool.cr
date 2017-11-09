@@ -1,5 +1,5 @@
 class LuckyRecord::BoolType < LuckyRecord::Type
-  alias BaseType = Bool
+  base_type Bool
 
   def self.parse(value : String)
     if %w(true 1).includes? value

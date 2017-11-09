@@ -1,5 +1,5 @@
 class LuckyRecord::TimeType < LuckyRecord::Type
-  alias BaseType = Time
+  base_type String
 
   def self.parse(value : String)
     SuccessfulCast(Time).new Time.parse(value, pattern: "%FT%X%z")

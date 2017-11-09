@@ -1,4 +1,13 @@
 abstract class LuckyRecord::Type
+  # Used at compile time to map Crystal types to their LuckyRecord type
+  CRYSTAL_TYPE_TO_LUCKY_RECORD_MAPPING = {} of Nil => Nil
+  CRYSTAL_TYPE_TO_BASE_TYPE_MAPPING = {} of Nil => Nil
+
+  macro base_type(type)
+    {% CRYSTAL_TYPE_TO_LUCKY_RECORD_MAPPING[@type.class.name.stringify.gsub(/\:Class/, "")] = @type %}
+    {% CRYSTAL_TYPE_TO_BASE_TYPE_MAPPING[@type.class.name.stringify.gsub(/\:Class/, "")] = type %}
+  end
+
   def self.deserialize(value)
     parse!(value)
   end

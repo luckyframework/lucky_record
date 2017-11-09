@@ -47,14 +47,14 @@ abstract class LuckyRecord::Form(T)
     end
 
     {% for field in fields %}
-      @_{{ field[:name] }} : LuckyRecord::Field({{ field[:type] }}::BaseType?)?
+      @_{{ field[:name] }} : LuckyRecord::Field({{ field[:base_type] }}?)?
 
       def {{ field[:name] }}
         _{{ field[:name] }}
       end
 
       private def _{{ field[:name] }}
-        @_{{ field[:name] }} ||= LuckyRecord::Field({{ field[:type] }}::BaseType?).new(
+        @_{{ field[:name] }} ||= LuckyRecord::Field({{ field[:base_type] }}?).new(
           name: :{{ field[:name].id }},
           param: allowed_params["{{ field[:name] }}"]?,
           value: @record.try(&.{{ field[:name] }}),
