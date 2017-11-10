@@ -275,4 +275,31 @@ describe "LuckyRecord::Form" do
       end
     end
   end
+
+  describe ".update!" do
+    context "on success" do
+      it "updates and returns the record" do
+        create_user(name: "Old Name")
+        user = UserQuery.new.first
+        params = {"name" => "New Name"}
+
+        record = UserForm.update! user, with: params
+
+        record.is_a?(User).should be_true
+        record.name.should eq "New Name"
+      end
+    end
+
+    context "on failure" do
+      it "raises an exception" do
+        create_user(name: "Old Name")
+        user = UserQuery.new.first
+        params = {"name" => ""}
+
+        expect_raises(LuckyRecord::InvalidFormError) do
+          UserForm.update! user, with: params
+        end
+      end
+    end
+  end
 end

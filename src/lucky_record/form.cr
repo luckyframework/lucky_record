@@ -175,6 +175,10 @@ abstract class LuckyRecord::Form(T)
     end
   end
 
+  def update! : T
+    save!
+  end
+
   private def insert_or_update
     if record_id
       update record_id

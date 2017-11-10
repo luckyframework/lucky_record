@@ -87,6 +87,22 @@ module LuckyRecord::NeedyInitializer
         yield form, form.record.not_nil!
       end
     end
+
+    def self.update!(
+        record,
+        with params,
+        {% if NEEDS.size > 0 %}
+          **needs
+        {% end %}
+      )
+      form = new(
+        record,
+        params,
+        {% if NEEDS.size > 0 %}
+          **needs
+        {% end %}
+      ).update!
+    end
   end
 
   macro generate_getters
