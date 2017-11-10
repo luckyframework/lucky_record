@@ -11,4 +11,8 @@ module LuckyRecord
       super "Could not find #{model} with id of #{id}"
     end
   end
+
+  # Raised when using the save! or update! methods on a form when it does not have the proper attributes
+  class InvalidFormError < LuckyRecordError
+  end
 end

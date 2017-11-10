@@ -167,6 +167,14 @@ abstract class LuckyRecord::Form(T)
     end
   end
 
+  def save! : T
+    if save
+      record.not_nil!
+    else
+      raise LuckyRecord::InvalidFormError.new("#{record} has invalid parameters")
+    end
+  end
+
   private def insert_or_update
     if record_id
       update record_id

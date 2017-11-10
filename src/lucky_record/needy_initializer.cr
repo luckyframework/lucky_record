@@ -53,6 +53,20 @@ module LuckyRecord::NeedyInitializer
       end
     end
 
+    def self.save!(
+        params,
+        {% if NEEDS.size > 0 %}
+          **needs
+        {% end %}
+      )
+      form = new(
+        params,
+        {% if NEEDS.size > 0 %}
+          **needs
+        {% end %}
+      ).save!
+    end
+
     def self.update(
         record,
         with params,
