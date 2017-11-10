@@ -89,7 +89,7 @@ class LuckyRecord::Model
     {% end %}
 
     {% unless base_type %}
-      {% raise "Could not find type for #{type_declaration.type}"}
+      {% raise "Lucky can't use #{type_declaration.type} as a field type"}
     {% end %}
 
     {% FIELDS << {
