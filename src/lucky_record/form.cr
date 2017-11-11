@@ -171,7 +171,7 @@ abstract class LuckyRecord::Form(T)
     if save
       record.not_nil!
     else
-      raise LuckyRecord::InvalidFormError.new("#{record} has invalid parameters")
+      raise LuckyRecord::InvalidFormError.new(form_name: typeof(self).to_s, form_object: self)
     end
   end
 

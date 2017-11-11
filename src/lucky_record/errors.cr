@@ -13,6 +13,12 @@ module LuckyRecord
   end
 
   # Raised when using the save! or update! methods on a form when it does not have the proper attributes
-  class InvalidFormError < LuckyRecordError
+  class InvalidFormError(T) < LuckyRecordError
+    getter form_name
+    getter form_object
+
+    def initialize(@form_name : String, @form_object : T)
+      super "Invalid #{form_name}. Could not save #{@form_object}"
+    end
   end
 end

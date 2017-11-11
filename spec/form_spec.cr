@@ -243,7 +243,10 @@ describe "LuckyRecord::Form" do
       it "raises an exception" do
         params = {"name" => "", "age" => "30"}
 
-        expect_raises(LuckyRecord::InvalidFormError) do
+        expect_raises(
+          LuckyRecord::InvalidFormError(UserForm),
+          /Invalid UserForm. Could not save/
+        ) do
           UserForm.save!(params)
         end
       end
@@ -296,7 +299,10 @@ describe "LuckyRecord::Form" do
         user = UserQuery.new.first
         params = {"name" => ""}
 
-        expect_raises(LuckyRecord::InvalidFormError) do
+        expect_raises(
+          LuckyRecord::InvalidFormError(UserForm),
+          /Invalid UserForm. Could not save/
+        ) do
           UserForm.update! user, with: params
         end
       end
