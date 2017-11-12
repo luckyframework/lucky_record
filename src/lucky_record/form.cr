@@ -71,9 +71,9 @@ abstract class LuckyRecord::Form(T)
       end
 
       def set_{{ field[:name] }}_from_param(value)
-        cast_result = {{ field[:type] }}.cast(value)
-        if cast_result.is_a? LuckyRecord::Type::SuccessfulCast
-          {{ field[:name] }}.value = cast_result.value
+        parse_result = {{ field[:type] }}.parse(value)
+        if parse_result.is_a? LuckyRecord::Type::SuccessfulCast
+          {{ field[:name] }}.value = parse_result.value
         else
           {{ field[:name] }}.add_error "is invalid"
         end

@@ -1,31 +1,31 @@
 abstract class LuckyRecord::Type
-  def self.deserialize(value)
-    cast!(value)
+  def self.from_db(value)
+    parse!(value)
   end
 
-  def self.cast(value : Nil)
+  def self.parse(value : Nil)
     SuccessfulCast(Nil).new(nil)
   end
 
-  def self.cast(value : String)
+  def self.parse(value : String)
     SuccessfulCast(String).new(value)
   end
 
-  def self.cast!(value)
-    cast(value).as(SuccessfulCast).value
+  def self.parse!(value)
+    parse(value).as(SuccessfulCast).value
   end
 
-  def self.serialize(value : Nil)
+  def self.to_db(value : Nil)
     nil
   end
 
-  def self.serialize(value : String)
+  def self.to_db(value : String)
     value
   end
 
-  def self.cast_and_serialize(value)
-    casted_value = cast!(value)
-    serialize(casted_value)
+  def self.to_db!(value)
+    parsed_value = parse!(value)
+    to_db(parsed_value)
   end
 
   class SuccessfulCast(T)

@@ -47,7 +47,7 @@ describe LuckyRecord::Model do
     user.to_param.should eq "123"
   end
 
-  it "sets up getters that cast the values" do
+  it "sets up getters that parse the values" do
     user = ModelWithCustomDataTypes.new id: 123,
       created_at: Time.now,
       updated_at: Time.now,
@@ -68,7 +68,7 @@ describe LuckyRecord::Model do
     query.to_sql.should eq ["SELECT * FROM users WHERE UPPER(email) = $1 AND age > $2", "foo@bar.com", "30"]
   end
 
-  it "casts values" do
+  it "parses values" do
     query = QueryMe::BaseQuery.new.email.upper.is(" Foo@bar.com").age.gt(30)
 
     query.to_sql.should eq ["SELECT * FROM users WHERE UPPER(email) = $1 AND age > $2", "foo@bar.com", "30"]
