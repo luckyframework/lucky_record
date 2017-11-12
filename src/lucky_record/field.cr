@@ -12,7 +12,8 @@ class LuckyRecord::Field(T)
     @param || value.to_s
   end
 
-  def add_error(message : String)
+  def add_error(message : Object = "is invalid")
+    message = message.call(@name.to_s, @value.to_s) if message.responds_to?(:call)
     @errors << message
   end
 

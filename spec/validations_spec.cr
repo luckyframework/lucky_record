@@ -1,5 +1,14 @@
 require "./spec_helper"
 
+private class CallableMessage
+  def initialize(@name = "")
+  end
+
+  def call(name, value)
+    "#{@name} says: #{name} of '#{value}' is invalid"
+  end
+end
+
 private class TestValidationUser
   include LuckyRecord::Validations
   @_age : LuckyRecord::Field(Int32?)?
@@ -29,6 +38,11 @@ private class TestValidationUser
     validate_required city, state, message: "ugh"
     validate_inclusions_of state, in: ["CA, NY"], message: "that one's not allowed"
     validate_confirmation_of name, message: "name confirmation much match"
+  end
+
+  def run_validations_with_message_callables
+    validate_required city, state, message: ->(x : String, y : String){ "#{x} required message from Proc" }
+    validate_inclusions_of state, in: ["CA, NY"], message: CallableMessage.new(@name)
   end
 
   def run_confirmation_validations
@@ -89,6 +103,15 @@ describe LuckyRecord::Validations do
       validate(name: "Paul") do |user|
         user.run_validations_with_message
         user.name.errors.should contain "name confirmation much match"
+      end
+    end
+
+    it "validates custom messages from callables" do
+      validate(name: "Paul", city: "", state: "") do |user|
+        user.run_validations_with_message_callables
+        user.city.errors.should contain "city required message from Proc"
+        user.state.errors.should contain "state required message from Proc"
+        user.state.errors.should contain "Paul says: state of '' is invalid"
       end
     end
   end
