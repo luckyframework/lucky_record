@@ -1,14 +1,8 @@
 require "./spec_helper"
 
-private class ModelWithCustomDataTypes < LuckyRecord::Model
-  table :foo do
-    field email : Email
-  end
-end
-
 private class QueryMe < LuckyRecord::Model
   table users do
-    field email : Email
+    field email : CustomEmail
     field age : Int32
   end
 end
@@ -48,12 +42,14 @@ describe LuckyRecord::Model do
   end
 
   it "sets up getters that parse the values" do
-    user = ModelWithCustomDataTypes.new id: 123,
+    user = QueryMe.new id: 123,
       created_at: Time.now,
       updated_at: Time.now,
+      age: 30,
       email: " Foo@bar.com "
 
-    user.email.should eq "foo@bar.com"
+    user.email.should be_a(CustomEmail)
+    user.email.to_s.should eq "foo@bar.com"
   end
 
   it "sets up simple methods for equality" do
