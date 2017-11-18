@@ -37,7 +37,7 @@ private class TestValidationUser
   def run_validations_with_message
     validate_required city, state, message: "ugh"
     validate_inclusions_of state, in: ["CA, NY"], message: "that one's not allowed"
-    validate_confirmation_of name, message: "name confirmation much match"
+    validate_confirmation_of name, message: "name confirmation must match"
   end
 
   def run_validations_with_message_callables
@@ -102,7 +102,7 @@ describe LuckyRecord::Validations do
     it "validates custom message for validate_inclusions_of" do
       validate(name: "Paul") do |user|
         user.run_validations_with_message
-        user.name.errors.should contain "name confirmation much match"
+        user.name.errors.should contain "name confirmation must match"
       end
     end
 
