@@ -41,7 +41,7 @@ private class TestValidationUser
   end
 
   def run_validations_with_message_callables
-    validate_required city, state, message: ->(x : String, y : String){ "#{x} required message from Proc" }
+    validate_required city, state, message: ->(field_name : String, field_value : String){ "#{field_name} required message from Proc" }
     validate_inclusions_of state, in: ["CA, NY"], message: CallableMessage.new(@name)
   end
 
