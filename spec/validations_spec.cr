@@ -37,13 +37,13 @@ private class TestValidationUser
 
   def run_validations_with_message
     validate_required city, state, message: "ugh"
-    validate_inclusions_of state, in: ["CA, NY"], message: "that one's not allowed"
-    validate_confirmation_of name, message: "name confirmation must match"
+    validate_inclusion_of state, in: ["CA, NY"], message: "that one's not allowed"
+    validate_confirmation_of name, with: name_confirmation, message: "name confirmation must match"
   end
 
   def run_validations_with_message_callables
     validate_required city, state, message: ->(field_name : String, field_value : String){ "#{field_name} required message from Proc" }
-    validate_inclusions_of state, in: ["CA, NY"], message: CallableMessage.new(@name)
+    validate_inclusion_of state, in: ["CA, NY"], message: CallableMessage.new(@name)
   end
 
   def run_confirmation_validations
@@ -93,17 +93,18 @@ describe LuckyRecord::Validations do
       end
     end
 
-    it "validates custom message for validate_inclusions_of" do
+    it "validates custom message for validate_inclusion_of" do
       validate(state: "") do |user|
         user.run_validations_with_message
         user.state.errors.should contain "that one's not allowed"
       end
     end
 
-    it "validates custom message for validate_inclusions_of" do
+    it "validates custom message for validate_inclusion_of" do
       validate(name: "Paul") do |user|
         user.run_validations_with_message
-        user.name.errors.should contain "name confirmation must match"
+        user.name.errors.empty?.should be_true
+        user.name_confirmation.errors.should contain "name confirmation must match"
       end
     end
 
