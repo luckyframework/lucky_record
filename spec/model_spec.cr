@@ -84,4 +84,10 @@ describe LuckyRecord::Model do
 
     User::BaseQuery.all.size.should eq 0
   end
+
+  describe ".fields" do
+    it "returns list of mapped fields" do
+      QueryMe.fields.should eq [:id, :created_at, :updated_at, :email, :age]
+    end
+  end
 end
