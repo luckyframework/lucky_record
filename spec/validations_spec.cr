@@ -1,6 +1,7 @@
 require "./spec_helper"
 
 private class CallableMessage
+  include LuckyRecord::CallableErrorMessage
   def initialize(@name = "")
   end
 
