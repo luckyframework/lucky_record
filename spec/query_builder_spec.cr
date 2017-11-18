@@ -57,15 +57,7 @@ describe "LuckyRecord::QueryBuilder" do
   end
 
   describe "#select" do
-    it "can specify a column to be selected" do
-      query = LuckyRecord::QueryBuilder
-        .new(table: :users)
-        .select([:name])
-
-      query.statement.should eq "SELECT users.name FROM users"
-    end
-
-    it "can specify multiple columns to be selected" do
+    it "specifies columns to be selected" do
       query = LuckyRecord::QueryBuilder
         .new(table: :users)
         .select([:name, :age])
