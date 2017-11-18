@@ -1,3 +1,5 @@
+require "./validations/**"
+
 module LuckyRecord::Validations
   private def validate_required(*fields, message = "is required")
     fields.each do |field|
