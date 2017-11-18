@@ -6,7 +6,7 @@ class LuckyRecord::QueryBuilder
     asc:  [] of Symbol | String,
     desc: [] of Symbol | String,
   }
-  @selections = "*"
+  @selections : String = "*"
   @prepared_statement_placeholder = 0
 
   VALID_DIRECTIONS = [:asc, :desc]

@@ -37,9 +37,9 @@ module LuckyRecord::Queryable(T)
     exec_query.first
   end
 
-  def count
+  def count : Int64
     query.count
-    exec_scalar
+    exec_scalar.as(Int64)
   end
 
   def each
