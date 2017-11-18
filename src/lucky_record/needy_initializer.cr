@@ -1,6 +1,7 @@
 module LuckyRecord::NeedyInitializer
   macro included
-    NEEDS = [] of Nil
+    NEEDS_ON_CREATE = [] of Nil
+    NEEDS_ON_UPDATE = [] of Nil
 
     macro inherited
       inherit_page_settings
@@ -10,15 +11,35 @@ module LuckyRecord::NeedyInitializer
   end
 
   macro needs(type_declaration)
-    {% NEEDS << type_declaration %}
+    needs {{ type_declaration }}, on: :update
+    needs {{ type_declaration }}, on: :create
+  end
+
+  macro needs(type_declaration, on)
+    {% if ![:create, :update].includes?(on) %}
+      {% raise "on option must be :create or :update" %}
+    {% end %}
+    {% if on == :update %}
+      {% NEEDS_ON_UPDATE << type_declaration %}
+    {% else %}
+      {% NEEDS_ON_CREATE << type_declaration %}
+    {% end %}
+    @{{ type_declaration.var }} : {{ type_declaration.type }}?
+    property {{ type_declaration.var }}
   end
 
   macro inherit_page_settings
-    NEEDS = [] of Nil
+    \{% if !@type.constant(:NEEDS_ON_CREATE) %}
+      NEEDS_ON_CREATE = [] of Nil
+      NEEDS_ON_UPDATE = [] of Nil
+    \{% end %}
 
     \{% if !@type.ancestors.first.abstract? %}
-      \{% for type_declaration in @type.ancestors.first.constant :NEEDS %}
-        \{% NEEDS << type_declaration %}
+      \{% for type_declaration in @type.ancestors.first.constant :NEEDS_ON_CREATE %}
+        \{% NEEDS_ON_CREATE << type_declaration %}
+      \{% end %}
+      \{% for type_declaration in @type.ancestors.first.constant :NEEDS_ON_CREATE %}
+        \{% NEEDS_ON_UPDATE << type_declaration %}
       \{% end %}
     \{% end %}
 
@@ -28,24 +49,23 @@ module LuckyRecord::NeedyInitializer
 
     macro finished
       generate_initializer
-      generate_getters
       generate_save_methods
     end
   end
 
   macro generate_save_methods
-    def self.save(
+    def self.create(
         params,
-        {% if NEEDS.size > 0 %}
-          **needs
+        {% for type_declaration in NEEDS_ON_CREATE %}
+          {{ type_declaration }},
         {% end %}
       )
       form = new(
-        params,
-        {% if NEEDS.size > 0 %}
-          **needs
-        {% end %}
+        params
       )
+      {% for type_declaration in NEEDS_ON_CREATE %}
+        form.{{ type_declaration.var }} = {{ type_declaration.var }}
+      {% end %}
       if form.save
         yield form, form.record
       else
@@ -53,34 +73,35 @@ module LuckyRecord::NeedyInitializer
       end
     end
 
-    def self.save!(
+    def self.create!(
         params,
-        {% if NEEDS.size > 0 %}
-          **needs
+        {% for type_declaration in NEEDS_ON_CREATE %}
+          {{ type_declaration }},
         {% end %}
       )
       form = new(
-        params,
-        {% if NEEDS.size > 0 %}
-          **needs
-        {% end %}
-      ).save!
+        params
+      )
+      {% for type_declaration in NEEDS_ON_CREATE %}
+        form.{{ type_declaration.var }} = {{ type_declaration.var }}
+      {% end %}
+      form.save!
     end
 
     def self.update(
         record,
         with params,
-        {% if NEEDS.size > 0 %}
-          **needs
+        {% for type_declaration in NEEDS_ON_UPDATE %}
+          {{ type_declaration }},
         {% end %}
       )
       form = new(
         record,
-        params,
-        {% if NEEDS.size > 0 %}
-          **needs
-        {% end %}
+        params
       )
+      {% for type_declaration in NEEDS_ON_UPDATE %}
+        form.{{ type_declaration.var }} = {{ type_declaration.var }}
+      {% end %}
       if form.save
         yield form, form.record.not_nil!
       else
@@ -91,41 +112,30 @@ module LuckyRecord::NeedyInitializer
     def self.update!(
         record,
         with params,
-        {% if NEEDS.size > 0 %}
-          **needs
+        {% for type_declaration in NEEDS_ON_UPDATE %}
+          {{ type_declaration }},
         {% end %}
       )
       form = new(
         record,
-        params,
-        {% if NEEDS.size > 0 %}
-          **needs
-        {% end %}
-      ).update!
+        params
+      )
+      {% for type_declaration in NEEDS_ON_UPDATE %}
+        form.{{ type_declaration.var }} = {{ type_declaration.var }}
+      {% end %}
+      form.update!
     end
-  end
-
-  macro generate_getters
-    {% for need in NEEDS %}
-      getter {{ need.var }}
-    {% end %}
   end
 
   macro generate_initializer
     def initialize(
         params : Hash(String, String) | LuckyRecord::Paramable,
-        {% for type_declaration in NEEDS %}
-          @{{ type_declaration }},
-        {% end %}
       )
       @params = ensure_paramable(params)
       extract_changes_from_params
     end
 
     def initialize(
-        {% for type_declaration in NEEDS %}
-          @{{ type_declaration }},
-        {% end %}
         **params
       )
       @params = named_tuple_to_params(params)
@@ -135,9 +145,6 @@ module LuckyRecord::NeedyInitializer
     def initialize(
         @record,
         params : Hash(String, String) | LuckyRecord::Paramable,
-        {% for type_declaration in NEEDS %}
-          @{{ type_declaration }},
-        {% end %}
       )
       @params = ensure_paramable(params)
       extract_changes_from_params
@@ -145,9 +152,6 @@ module LuckyRecord::NeedyInitializer
 
     def initialize(
         @record,
-        {% for type_declaration in NEEDS %}
-          @{{ type_declaration }},
-        {% end %}
         **params
       )
       @params = named_tuple_to_params(params)

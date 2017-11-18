@@ -15,13 +15,13 @@ module LuckyRecord::Validations
     end
   end
 
-  macro validate_confirmation_of(field_name, message = "must match")
-    if {{ field_name.id }}.value != {{ field_name.id }}_confirmation.value
-      {{ field_name }}.add_error {{ message }}
+  private def validate_confirmation_of(field, with confirmation_field, message = "must match")
+    if field.value != confirmation_field.value
+      confirmation_field.add_error message
     end
   end
 
-  private def validate_inclusions_of(field, in allowed_values, message = "is invalid")
+  private def validate_inclusion_of(field, in allowed_values, message = "is invalid")
     if !allowed_values.includes? field.value
       field.add_error message
     end

@@ -37,8 +37,8 @@ private class TestValidationUser
 
   def run_validations_with_message
     validate_required city, state, message: "ugh"
-    validate_inclusions_of state, in: ["CA, NY"], message: "that one's not allowed"
-    validate_confirmation_of name, message: "name confirmation must match"
+    validate_inclusion_of state, in: ["CA, NY"], message: "that one's not allowed"
+    validate_confirmation_of name, with: name_confirmation, message: "name confirmation must match"    
   end
 
   def run_validations_with_message_callables
@@ -47,11 +47,11 @@ private class TestValidationUser
   end
 
   def run_confirmation_validations
-    validate_confirmation_of name
+    validate_confirmation_of name, with: name_confirmation
   end
 
   def run_inclusion_validations
-    validate_inclusions_of name, in: ["Paul", "Pablo"]
+    validate_inclusion_of name, in: ["Paul", "Pablo"]
   end
 
   macro field(type, name)
@@ -133,7 +133,7 @@ describe LuckyRecord::Validations do
     it "validates the fields match" do
       validate(name: "Paul", name_confirmation: "Pablo") do |user|
         user.run_confirmation_validations
-        user.name.errors.should eq ["must match"]
+        user.name_confirmation.errors.should eq ["must match"]
       end
 
       validate(name: "Paul", name_confirmation: "Paul") do |user|

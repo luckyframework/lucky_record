@@ -80,15 +80,15 @@ describe "LuckyRecord::Form" do
     end
   end
 
-  describe "casting" do
-    it "cast integers, time objects, etc." do
+  describe "parsing" do
+    it "parse integers, time objects, etc." do
       now = Time.now.at_beginning_of_minute
       form = UserForm.new({"joined_at" => now.to_s("%FT%X%z")})
 
       form.joined_at.value.should eq now
     end
 
-    it "gracefully handles bad inputs when casting" do
+    it "gracefully handles bad inputs when parsing" do
       form = UserForm.new({
         "joined_at" => "this is not a time",
         "age"       => "not an int",
@@ -209,7 +209,7 @@ describe "LuckyRecord::Form" do
     context "on success" do
       it "yields the form and the saved record" do
         params = {"joined_at" => now_as_string, "name" => "New Name", "age" => "30"}
-        UserForm.save params do |form, record|
+        UserForm.create params do |form, record|
           form.save_succeeded?.should be_true
           record.is_a?(User).should be_true
         end
@@ -219,7 +219,7 @@ describe "LuckyRecord::Form" do
     context "on failure" do
       it "yields the form and nil" do
         params = {"name" => "", "age" => "30"}
-        UserForm.save params do |form, record|
+        UserForm.create params do |form, record|
           form.save_failed?.should be_true
           record.should be_nil
         end
@@ -232,7 +232,7 @@ describe "LuckyRecord::Form" do
       it "saves and returns the record" do
         params = {"joined_at" => now_as_string, "name" => "New Name", "age" => "30"}
 
-        record = UserForm.save!(params)
+        record = UserForm.create!(params)
 
         record.is_a?(User).should be_true
         record.name.should eq "New Name"
@@ -247,7 +247,7 @@ describe "LuckyRecord::Form" do
           LuckyRecord::InvalidFormError(UserForm),
           /Invalid UserForm. Could not save/
         ) do
-          UserForm.save!(params)
+          UserForm.create!(params)
         end
       end
     end
