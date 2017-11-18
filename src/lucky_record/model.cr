@@ -89,7 +89,7 @@ class LuckyRecord::Model
   end
 
   macro setup_fields_method
-    def self.fields
+    def self.column_names : Array(Symbol)
       [
         {% for field in FIELDS %}
           :{{field[:name]}},
