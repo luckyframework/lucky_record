@@ -17,8 +17,7 @@ class LuckyRecord::Criteria(T, V)
   end
 
   def is(value)
-    sql_clause = build_sql_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
-    rows.query.where(sql_clause)
+    add_where_sql_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
     rows
   end
 
@@ -28,43 +27,39 @@ class LuckyRecord::Criteria(T, V)
 
   def not : LuckyRecord::Criteria
     @negate_next_criteria = true
-    # LuckyRecord::NegatedCriteria.new(@rows, @column)
     self
   end
 
-  def is_not(value)
-    rows.query.where(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
-    rows
+  def is_not(value) : T
+    add_where_sql_clause(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
   end
 
-  def gt(value)
-    rows.query.where(LuckyRecord::Where::GreaterThan.new(column, V::Lucky.to_db!(value)))
-    rows
+  def gt(value) : T
+    add_where_sql_clause(LuckyRecord::Where::GreaterThan.new(column, V::Lucky.to_db!(value)))
   end
 
-  def gte(value)
-    rows.query.where(LuckyRecord::Where::GreaterThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
-    rows
+  def gte(value) : T
+    add_where_sql_clause(LuckyRecord::Where::GreaterThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
-  def lt(value)
-    rows.query.where(LuckyRecord::Where::LessThan.new(column, V::Lucky.to_db!(value)))
-    rows
+  def lt(value) : T
+    add_where_sql_clause(LuckyRecord::Where::LessThan.new(column, V::Lucky.to_db!(value)))
   end
 
-  def lte(value)
-    rows.query.where(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
-    rows
+  def lte(value) : T
+    add_where_sql_clause(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
-  def like(value)
-    sql_clause = build_sql_clause(LuckyRecord::Where::Like.new(column, V::Lucky.to_db!(value)))
-    rows.query.where(sql_clause)
-    rows
+  def like(value) : T
+    add_where_sql_clause(LuckyRecord::Where::Like.new(column, V::Lucky.to_db!(value)))
   end
 
-  def ilike(value)
-    sql_clause = build_sql_clause(LuckyRecord::Where::Ilike.new(column, V::Lucky.to_db!(value)))
+  def ilike(value) : T
+    add_where_sql_clause(LuckyRecord::Where::Ilike.new(column, V::Lucky.to_db!(value)))
+  end
+
+  def add_where_sql_clause(sql_clause)
+    sql_clause = build_sql_clause(sql_clause)
     rows.query.where(sql_clause)
     rows
   end
