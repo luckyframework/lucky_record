@@ -17,7 +17,8 @@ class LuckyRecord::Criteria(T, V)
   end
 
   def is(value)
-    rows.query.where(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
+    sql_clause = build_sql_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
+    rows.query.where(sql_clause)
     rows
   end
 
@@ -75,7 +76,4 @@ class LuckyRecord::Criteria(T, V)
       sql_clause
     end
   end
-end
-
-class LuckyRecord::NegatedCriteria(T, V) < LuckyRecord::Criteria(T, V)
 end

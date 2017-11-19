@@ -59,7 +59,7 @@ describe LuckyRecord::Criteria do
     end
 
     it "it resets after having negated once" do
-      age.not.like("3").age.lt("20").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age NOT LIKE $1 AND age < $2", "3", "20"]
+      age.not.like("3").age.is("20").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age NOT LIKE $1 AND age = $2", "3", "20"]
     end
   end
 end
