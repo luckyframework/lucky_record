@@ -19,10 +19,6 @@ module LuckyRecord::Queryable(T)
     self
   end
 
-  def where
-    self
-  end
-
   def order_by(column, direction)
     query.order_by(column, direction)
     self
