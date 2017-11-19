@@ -93,11 +93,21 @@ describe LuckyRecord::Query do
   end
 
   describe "#not" do
-    it "negates the given where condition" do
+    it "negates the given where condition as 'equal'" do
       insert_a_user
-      results = UserQuery.new.where.not(:name, "not the name").results
 
+      results = UserQuery.new.name.not("not the name").results
       results.should eq UserQuery.new.results
+
+      results = UserQuery.new.name.not("Paul").results
+      results.should eq [] of User
+    end
+
+    it "negates any previous condition" do
+      insert_a_user
+
+      results = UserQuery.new.name.not.is("Paul").results
+      results.should eq [] of User
     end
   end
 end
