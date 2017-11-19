@@ -91,6 +91,16 @@ describe LuckyRecord::Query do
       count.should eq 1
     end
   end
+
+  describe "#not" do
+    it "negates the given where condition" do
+      insert_a_user
+      query = UserQuery.new.where.not(:name, "not the name").query
+
+      query.statement.should eq "SELECT #{User::COLUMNS} FROM users WHERE name != $1"
+      query.args.should eq ["not the name"]
+    end
+  end
 end
 
 private def insert_a_user

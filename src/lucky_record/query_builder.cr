@@ -103,6 +103,15 @@ class LuckyRecord::QueryBuilder
     self
   end
 
+  def where
+    self
+  end
+
+  def not(where_clause : LuckyRecord::Where::SqlClause)
+    @wheres << where_clause.negated
+    self
+  end
+
   private def wheres_sql
     if @wheres.any?
       "WHERE " + @wheres.map(&.prepare(next_prepared_statement_placeholder)).join(" AND ")

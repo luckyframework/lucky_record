@@ -19,6 +19,15 @@ module LuckyRecord::Queryable(T)
     self
   end
 
+  def where
+    self
+  end
+
+  def not(column, value)
+    query.where(LuckyRecord::Where::NotEqual.new(column, value.to_s))
+    self
+  end
+
   def order_by(column, direction)
     query.order_by(column, direction)
     self

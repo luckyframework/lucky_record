@@ -21,6 +21,14 @@ describe "LuckyRecord::QueryBuilder" do
     query.args.should eq ["Paul", "20"]
   end
 
+  it "accepts negating where clauses with not" do
+    query = new_query
+      .where.not(LuckyRecord::Where::Equal.new(:name, "Paul"))
+
+    query.statement.should eq "SELECT * FROM users WHERE name != $1"
+    query.args.should eq ["Paul"]
+  end
+
   it "can be ordered" do
     query = new_query
       .order_by(:name, :asc)
