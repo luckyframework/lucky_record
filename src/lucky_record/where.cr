@@ -17,7 +17,7 @@ module LuckyRecord::Where
       "="
     end
 
-    def negated : SqlClause
+    def negated : NotEqual
       NotEqual.new(@column, @value)
     end
   end
@@ -27,7 +27,7 @@ module LuckyRecord::Where
       "!="
     end
 
-    def negated : SqlClause
+    def negated : Equal
       Equal.new(@column, @value)
     end
   end
@@ -37,7 +37,7 @@ module LuckyRecord::Where
       ">"
     end
 
-    def negated : SqlClause
+    def negated : LessThanOrEqualTo
       LessThanOrEqualTo.new(@column, @value)
     end
   end
@@ -47,7 +47,7 @@ module LuckyRecord::Where
       ">="
     end
 
-    def negated : SqlClause
+    def negated : LessThan
       LessThan.new(@column, @value)
     end
   end
@@ -57,7 +57,7 @@ module LuckyRecord::Where
       "<"
     end
 
-    def negated : SqlClause
+    def negated : GreaterThanOrEqualTo
       GreaterThanOrEqualTo.new(@column, @value)
     end
   end
@@ -67,7 +67,7 @@ module LuckyRecord::Where
       "<="
     end
 
-    def negated : SqlClause
+    def negated : GreaterThan
       GreaterThan.new(@column, @value)
     end
   end
@@ -77,7 +77,7 @@ module LuckyRecord::Where
       "LIKE"
     end
 
-    def negated : SqlClause
+    def negated : NotLike
       NotLike.new(@column, @value)
     end
   end
@@ -87,7 +87,7 @@ module LuckyRecord::Where
       "ILIKE"
     end
 
-    def negated : SqlClause
+    def negated : NotIlike
       NotIlike.new(@column, @value)
     end
   end
@@ -97,7 +97,7 @@ module LuckyRecord::Where
       "NOT LIKE"
     end
 
-    def negated : SqlClause
+    def negated : Like
       Like.new(@column, @value)
     end
   end
@@ -107,7 +107,7 @@ module LuckyRecord::Where
       "NOT ILIKE"
     end
 
-    def negated : SqlClause
+    def negated : Ilike
       Ilike.new(@column, @value)
     end
   end
