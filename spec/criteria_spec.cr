@@ -54,12 +54,12 @@ describe LuckyRecord::Criteria do
 
     describe "with chained criteria" do
       it "negates the following criteria" do
-        age.not.ilike("3").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age NOT ILIKE $1", "3"]
+        age.not.gt("3").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age <= $1", "3"]
       end
     end
 
     it "it resets after having negated once" do
-      age.not.like("3").age.is("20").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age NOT LIKE $1 AND age = $2", "3", "20"]
+      age.not.gt("3").age.is("20").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age <= $1 AND age = $2", "3", "20"]
     end
   end
 end

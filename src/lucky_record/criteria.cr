@@ -50,14 +50,6 @@ class LuckyRecord::Criteria(T, V)
     add_where_sql_clause(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
-  def like(value) : T
-    add_where_sql_clause(LuckyRecord::Where::Like.new(column, V::Lucky.to_db!(value)))
-  end
-
-  def ilike(value) : T
-    add_where_sql_clause(LuckyRecord::Where::Ilike.new(column, V::Lucky.to_db!(value)))
-  end
-
   private def add_where_sql_clause(sql_clause)
     sql_clause = build_sql_clause(sql_clause)
     rows.query.where(sql_clause)
