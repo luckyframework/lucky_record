@@ -94,13 +94,18 @@ describe LuckyRecord::Query do
 
   describe "#not" do
     it "negates the given where condition as 'equal'" do
-      insert_a_user
+      insert_a_user(name: "Paul")
 
-      results = UserQuery.new.name.not("not the name").results
+      results = UserQuery.new.name.not("not existing").results
       results.should eq UserQuery.new.results
 
       results = UserQuery.new.name.not("Paul").results
       results.should eq [] of User
+
+      insert_a_user(name: "Alex")
+      insert_a_user(name: "Sarah")
+      results = UserQuery.new.name.lower.not("alex").results
+      results.map(&.name).should eq ["Paul", "Sarah"]
     end
 
     it "negates any previous condition" do
@@ -112,13 +117,13 @@ describe LuckyRecord::Query do
   end
 end
 
-private def insert_a_user
+private def insert_a_user(name = "Paul", age = 34)
   LuckyRecord::Repo.run do |db|
     db.exec "INSERT INTO users(name, created_at, updated_at, age, joined_at) VALUES ($1, $2, $3, $4, $5)",
-      "Paul",
+      name,
       Time.now,
       Time.now,
-      34,
+      age,
       Time.now
   end
 end
