@@ -103,10 +103,6 @@ class LuckyRecord::QueryBuilder
     self
   end
 
-  def where
-    self
-  end
-
   private def wheres_sql
     if @wheres.any?
       "WHERE " + @wheres.map(&.prepare(next_prepared_statement_placeholder)).join(" AND ")
