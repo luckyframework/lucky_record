@@ -58,13 +58,13 @@ class LuckyRecord::Criteria(T, V)
     add_where_sql_clause(LuckyRecord::Where::Ilike.new(column, V::Lucky.to_db!(value)))
   end
 
-  def add_where_sql_clause(sql_clause)
+  private def add_where_sql_clause(sql_clause)
     sql_clause = build_sql_clause(sql_clause)
     rows.query.where(sql_clause)
     rows
   end
 
-  def build_sql_clause(sql_clause : LuckyRecord::Where::SqlClause) : LuckyRecord::Where::SqlClause
+  private def build_sql_clause(sql_clause : LuckyRecord::Where::SqlClause) : LuckyRecord::Where::SqlClause
     if @negate_next_criteria
       sql_clause.negated
     else
