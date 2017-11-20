@@ -6,6 +6,7 @@ module LuckyRecord::Where
     end
 
     abstract def operator : String
+    abstract def negated : SqlClause
 
     def prepare(prepared_statement_placeholder : String)
       "#{column} #{operator} #{prepared_statement_placeholder}"

@@ -1,93 +1,23 @@
 require "./spec_helper"
 
+macro should_negate(original_where, expected_negated_where)
+  clause = {{original_where}}.new("column", "value").negated
+  clause.column.should eq "column"
+  clause.value.should eq "value"
+  clause.should be_a({{expected_negated_where}})
+end
+
 describe LuckyRecord::Where do
-  describe "Equal" do
-    describe "#negated" do
-      it "returns a NotEqual" do
-        LuckyRecord::Where::Equal.new("column", "value").negated
-          .should be_a LuckyRecord::Where::NotEqual
-      end
-    end
-  end
-
-  describe "NotEqual" do
-    describe "#negated" do
-      it "returns an Equal" do
-        LuckyRecord::Where::NotEqual.new("column", "value").negated
-          .should be_a LuckyRecord::Where::Equal
-      end
-    end
-  end
-
-  describe "GreaterThan" do
-    describe "#negated" do
-      it "returns a LessThanOrEqual" do
-        LuckyRecord::Where::GreaterThan.new("column", "value").negated
-          .should be_a LuckyRecord::Where::LessThanOrEqualTo
-      end
-    end
-  end
-
-  describe "GreaterThanOrEqualTo" do
-    describe "#negated" do
-      it "returns a LessThan" do
-        LuckyRecord::Where::GreaterThanOrEqualTo.new("column", "value").negated
-          .should be_a LuckyRecord::Where::LessThan
-      end
-    end
-  end
-
-  describe "LessThan" do
-    describe "#negated" do
-      it "returns a GreaterThanOrEqualTo" do
-        LuckyRecord::Where::LessThan.new("column", "value").negated
-          .should be_a LuckyRecord::Where::GreaterThanOrEqualTo
-      end
-    end
-  end
-
-  describe "LessThanOrEqualTo" do
-    describe "#negated" do
-      it "returns a GreaterThan" do
-        LuckyRecord::Where::LessThanOrEqualTo.new("column", "value").negated
-          .should be_a LuckyRecord::Where::GreaterThan
-      end
-    end
-  end
-
-  describe "Like" do
-    describe "#negated" do
-      it "returns a NotLike" do
-        LuckyRecord::Where::Like.new("column", "value").negated
-          .should be_a LuckyRecord::Where::NotLike
-      end
-    end
-  end
-
-  describe "NotLike" do
-    describe "#negated" do
-      it "returns a Like" do
-        LuckyRecord::Where::NotLike.new("column", "value").negated
-          .should be_a LuckyRecord::Where::Like
-      end
-    end
-  end
-
-  describe "Ilike" do
-    describe "#negated" do
-      it "returns a Like" do
-        LuckyRecord::Where::Ilike.new("column", "value").negated
-          .should be_a LuckyRecord::Where::NotIlike
-      end
-    end
-  end
-
-  describe "NotIlike" do
-    describe "#negated" do
-      it "returns a Ilike" do
-        LuckyRecord::Where::NotIlike.new("column", "value").negated
-          .should be_a LuckyRecord::Where::Ilike
-      end
-    end
+  it "can be negated" do
+    should_negate(LuckyRecord::Where::Equal, LuckyRecord::Where::NotEqual)
+    should_negate(LuckyRecord::Where::NotEqual, LuckyRecord::Where::Equal)
+    should_negate(LuckyRecord::Where::GreaterThan, LuckyRecord::Where::LessThanOrEqualTo)
+    should_negate(LuckyRecord::Where::GreaterThanOrEqualTo, LuckyRecord::Where::LessThan)
+    should_negate(LuckyRecord::Where::LessThan, LuckyRecord::Where::GreaterThanOrEqualTo)
+    should_negate(LuckyRecord::Where::LessThanOrEqualTo, LuckyRecord::Where::GreaterThan)
+    should_negate(LuckyRecord::Where::Like, LuckyRecord::Where::NotLike)
+    should_negate(LuckyRecord::Where::NotLike, LuckyRecord::Where::Like)
+    should_negate(LuckyRecord::Where::Ilike, LuckyRecord::Where::NotIlike)
+    should_negate(LuckyRecord::Where::NotIlike, LuckyRecord::Where::Ilike)
   end
 end
