@@ -46,13 +46,13 @@ describe LuckyRecord::Criteria do
   end
 
   describe "not" do
-    describe "with a value" do
+    describe "without chained criteria" do
       it "negates to not equal" do
         age.not("30").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age != $1", "30"]
       end
     end
 
-    describe "without a value" do
+    describe "with chained criteria" do
       it "negates the following criteria" do
         age.not.ilike("3").to_sql.should eq ["SELECT #{QueryMe::COLUMNS} FROM users WHERE age NOT ILIKE $1", "3"]
       end
