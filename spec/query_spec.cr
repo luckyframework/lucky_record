@@ -92,7 +92,7 @@ describe LuckyRecord::Query do
     end
   end
 
-  describe "#not" do
+  describe "#not with an argument" do
     it "negates the given where condition as 'equal'" do
       insert_a_user(name: "Paul")
 
@@ -107,12 +107,22 @@ describe LuckyRecord::Query do
       results = UserQuery.new.name.lower.not("alex").results
       results.map(&.name).should eq ["Paul", "Sarah"]
     end
+  end
 
+  describe "#not with no arguments" do
     it "negates any previous condition" do
       insert_a_user
 
       results = UserQuery.new.name.not.is("Paul").results
       results.should eq [] of User
+    end
+
+    it "can be used with operators" do
+      insert_a_user(name: "Joyce", age: 33)
+      insert_a_user(name: "Jil", age: 34)
+
+      results = UserQuery.new.age.not.gt(33).results
+      results.map(&.name).should eq ["Joyce"]
     end
   end
 end
