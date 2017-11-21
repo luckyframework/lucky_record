@@ -17,7 +17,7 @@ class LuckyRecord::Criteria(T, V)
   end
 
   def is(value)
-    add_where_sql_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
     rows
   end
 
@@ -31,26 +31,26 @@ class LuckyRecord::Criteria(T, V)
   end
 
   def is_not(value) : T
-    add_where_sql_clause(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
   end
 
   def gt(value) : T
-    add_where_sql_clause(LuckyRecord::Where::GreaterThan.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::GreaterThan.new(column, V::Lucky.to_db!(value)))
   end
 
   def gte(value) : T
-    add_where_sql_clause(LuckyRecord::Where::GreaterThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::GreaterThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
   def lt(value) : T
-    add_where_sql_clause(LuckyRecord::Where::LessThan.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::LessThan.new(column, V::Lucky.to_db!(value)))
   end
 
   def lte(value) : T
-    add_where_sql_clause(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
+    add_clause(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
-  private def add_where_sql_clause(sql_clause)
+  private def add_clause(sql_clause)
     sql_clause = build_sql_clause(sql_clause)
     rows.query.where(sql_clause)
     rows

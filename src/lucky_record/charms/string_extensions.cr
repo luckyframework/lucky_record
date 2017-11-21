@@ -16,11 +16,11 @@ class String
       @lower = false
 
       def like(value : String) : T
-        add_where_sql_clause(LuckyRecord::Where::Like.new(column, value))
+        add_clause(LuckyRecord::Where::Like.new(column, value))
       end
 
       def ilike(value : String) : T
-        add_where_sql_clause(LuckyRecord::Where::Ilike.new(column, value))
+        add_clause(LuckyRecord::Where::Ilike.new(column, value))
       end
 
       def upper
