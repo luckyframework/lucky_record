@@ -9,11 +9,7 @@ module LuckyRecord::Where
     abstract def negated : SqlClause
 
     def prepare(prepared_statement_placeholder : String)
-      if ["= ANY", "!= ALL"].includes? operator
-        "#{column} #{operator} (#{prepared_statement_placeholder})"
-      else
-        "#{column} #{operator} #{prepared_statement_placeholder}"
-      end
+      "#{column} #{operator} #{prepared_statement_placeholder}"
     end
   end
 
@@ -125,6 +121,10 @@ module LuckyRecord::Where
     def negated : NotIn
       NotIn.new(@column, @value)
     end
+
+    def prepare(prepared_statement_placeholder : String)
+      "#{column} #{operator} (#{prepared_statement_placeholder})"
+    end
   end
 
   class NotIn < SqlClause
@@ -134,6 +134,10 @@ module LuckyRecord::Where
 
     def negated : In
       In.new(@column, @value)
+    end
+
+    def prepare(prepared_statement_placeholder : String)
+      "#{column} #{operator} (#{prepared_statement_placeholder})"
     end
   end
 end
