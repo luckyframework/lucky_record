@@ -7,15 +7,7 @@ class String
       SuccessfulCast(String).new(value)
     end
 
-    def self.parse(value : Array(String))
-      SuccessfulCast(Array(String)).new(value)
-    end
-
     def to_db(value : String)
-      value
-    end
-
-    def to_db(value : Array(String))
       value
     end
 

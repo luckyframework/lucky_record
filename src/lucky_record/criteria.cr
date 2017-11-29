@@ -50,8 +50,9 @@ class LuckyRecord::Criteria(T, V)
     add_clause(LuckyRecord::Where::LessThanOrEqualTo.new(column, V::Lucky.to_db!(value)))
   end
 
-  def in(value)
-    add_clause(LuckyRecord::Where::In.new(column, V::Lucky.to_db!(value)))
+  def in(values)
+    values = values.map { |value| V::Lucky.to_db!(value) }
+    add_clause(LuckyRecord::Where::In.new(column, values))
   end
 
   private def add_clause(sql_clause)
