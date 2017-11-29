@@ -17,8 +17,16 @@ struct Int32
       SuccessfulCast(Int32).new(value)
     end
 
+    def self.parse(value : Array(Int32))
+      SuccessfulCast(Array(Int32)).new(value)
+    end
+
     def self.to_db(value : Int32)
       value.to_s
+    end
+
+    def to_db(value : Array(Int32))
+      value
     end
 
     class Criteria(T, V) < LuckyRecord::Criteria(T, V)

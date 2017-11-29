@@ -2,14 +2,18 @@ module LuckyRecord::Where
   abstract class SqlClause
     getter :column, :value
 
-    def initialize(@column : Symbol | String, @value : String)
+    def initialize(@column : Symbol | String, @value : String | Array(String) | Array(Int32))
     end
 
     abstract def operator : String
     abstract def negated : SqlClause
 
     def prepare(prepared_statement_placeholder : String)
-      "#{column} #{operator} #{prepared_statement_placeholder}"
+      if ["= ANY", "!= ALL"].includes? operator
+        "#{column} #{operator} (#{prepared_statement_placeholder})"
+      else
+        "#{column} #{operator} #{prepared_statement_placeholder}"
+      end
     end
   end
 
@@ -110,6 +114,26 @@ module LuckyRecord::Where
 
     def negated : Ilike
       Ilike.new(@column, @value)
+    end
+  end
+
+  class In < SqlClause
+    def operator
+      "= ANY"
+    end
+
+    def negated : NotIn
+      NotIn.new(@column, @value)
+    end
+  end
+
+  class NotIn < SqlClause
+    def operator
+      "!= ALL"
+    end
+
+    def negated : In
+      In.new(@column, @value)
     end
   end
 end
