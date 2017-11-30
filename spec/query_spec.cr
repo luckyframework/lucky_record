@@ -67,7 +67,7 @@ describe LuckyRecord::Query do
       query = UserQuery.new.where(:id, 1).query
 
       query.statement.should eq "SELECT #{User::COLUMNS} FROM users WHERE id = $1"
-      query.args.should eq ["1"]
+      query.args.should eq [1]
     end
   end
 
