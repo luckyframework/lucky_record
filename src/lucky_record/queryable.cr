@@ -33,6 +33,10 @@ module LuckyRecord::Queryable(T)
     id(id).limit(1).first? || raise RecordNotFoundError.new(model: @@table_name, id: id.to_s)
   end
 
+  def find(id : Nil)
+    raise RecordNotFoundError.new(model: @@table_name, id: "nil")
+  end
+
   def first
     query.limit(1)
     exec_query.first

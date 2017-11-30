@@ -10,4 +10,19 @@ describe LuckyRecord::Model do
     post.comments.to_a.should eq [comment]
     comment.post.should eq post
   end
+
+  it "gets the related records for nilable association that exists" do
+    manager = ManagerBox.save
+    employee = EmployeeBox.new.manager_id(manager.id).save
+
+    manager = Manager::BaseQuery.new.find(manager.id)
+
+    manager.employees.to_a.should eq [employee]
+    employee.manager.should eq manager
+  end
+
+  it "returns nil for nilable association that doesn't exists" do
+    employee = EmployeeBox.new.save
+    employee.manager.should eq nil
+  end
 end
