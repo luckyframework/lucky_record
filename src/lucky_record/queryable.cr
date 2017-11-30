@@ -34,7 +34,7 @@ module LuckyRecord::Queryable(T)
   end
 
   def find(id : Nil)
-    raise RecordNotFoundError.new(model: @@table_name, id: "nil")
+    return nil
   end
 
   def first
