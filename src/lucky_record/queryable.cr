@@ -52,8 +52,8 @@ module LuckyRecord::Queryable(T)
     self
   end
 
-  def where(column : Symbol, value)
-    query.where(LuckyRecord::Where::Equal.new(column, value.to_s))
+  def where(column, value)
+    query.where(LuckyRecord::Where::Equal.new(column, value))
     self
   end
 
