@@ -21,7 +21,7 @@ describe LuckyRecord::Model do
     employee.manager.should eq manager
   end
 
-  it "returns nil for nilable association that doesn't exists" do
+  it "returns nil for nilable association that doesn't exist" do
     employee = EmployeeBox.new.save
     employee.manager.should eq nil
   end
