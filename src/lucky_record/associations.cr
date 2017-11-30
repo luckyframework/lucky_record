@@ -22,7 +22,7 @@ module LuckyRecord::Associations
 
     def {{ assoc_name.id }}
       {{ assoc_name.id }}_id.try do |value|
-        {{ model }}::BaseQuery.new.find({{ assoc_name.id }}_id)
+        {{ model }}::BaseQuery.new.find(value)
       end
     end
   end
