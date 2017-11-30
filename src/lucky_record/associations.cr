@@ -18,14 +18,12 @@ module LuckyRecord::Associations
       {% nilable = false %}
     {% end %}
 
-    {% if nilable %}
-      field {{ assoc_name.id }}_id : Int32?
-    {% else %}
-      field {{ assoc_name.id }}_id : Int32
-    {% end %}
+    field {{ assoc_name.id }}_id : Int32{% if nilable %}?{% end %}
 
     def {{ assoc_name.id }}
-      {{ model }}::BaseQuery.new.find({{ assoc_name.id }}_id)
+      {{ assoc_name.id }}_id.try do |value|
+        {{ model }}::BaseQuery.new.find({{ assoc_name.id }}_id)
+      end
     end
   end
 end
