@@ -1,6 +1,11 @@
+require "lucky_inflector"
+
 module LuckyRecord::Associations
   macro has_many(type_declaration)
     {% assoc_name = type_declaration.var }
+
+    association {{ assoc_name }}
+
     {% model = type_declaration.type %}
     def {{ assoc_name.id }}
       {{ model }}::BaseQuery.new.{{ @type.name.underscore }}_id(id)
@@ -9,6 +14,9 @@ module LuckyRecord::Associations
 
   macro belongs_to(type_declaration)
     {% assoc_name = type_declaration.var }
+    {% LuckyInflector::Inflector.pluralize assoc_name %} # Can't get this to work...
+
+    association {{ assoc_name }}, :id
 
     {% if type_declaration.type.is_a?(Union) %}
       {% model = type_declaration.type.types.first %}

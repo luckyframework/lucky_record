@@ -183,6 +183,28 @@ describe LuckyRecord::Query do
       results.map(&.name).should eq [] of String
     end
   end
+
+  # how should I test these methods?
+  pending "#joins methods for associations" do
+    it "inner joins on belongs to" do
+      insert_a_post
+      post = Post::BaseQuery.new.first
+      insert_a_comment(post.id)
+
+      result = Comment::BaseQuery.new.join_posts.first # creates join_post at the moment
+      result.post.should eq post
+    end
+
+    it "inner joins on has many" do
+      insert_a_post
+      post = Post::BaseQuery.new.first
+      insert_a_comment(post.id)
+      comment = Comment::BaseQuery.new.first
+
+      result = Post::BaseQuery.new.join_comments.first
+      result.comments.first.should eq comment
+    end
+  end
 end
 
 private def insert_a_user(name = "Paul", age = 34)
@@ -192,6 +214,25 @@ private def insert_a_user(name = "Paul", age = 34)
       Time.now,
       Time.now,
       age,
+      Time.now
+  end
+end
+
+private def insert_a_post(title = "Fast as C")
+  LuckyRecord::Repo.run do |db|
+    db.exec "INSERT INTO posts(title, created_at, updated_at) VALUES ($1, $2, $3)",
+      title,
+      Time.now,
+      Time.now
+  end
+end
+
+private def insert_a_comment(post_id, body = "Slick as Ruby")
+  LuckyRecord::Repo.run do |db|
+    db.exec "INSERT INTO comments(post_id, body, created_at, updated_at) VALUES ($1, $2, $3, $4)",
+      post_id,
+      body,
+      Time.now,
       Time.now
   end
 end
