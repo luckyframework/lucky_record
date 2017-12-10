@@ -42,6 +42,8 @@ module LuckyRecord::Queryable(T)
   def first
     query.limit(1)
     exec_query.first
+  rescue IndexError
+    raise RecordNotFoundError.new(model: @@table_name, id: :first)
   end
 
   def count : Int64

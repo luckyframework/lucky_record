@@ -20,6 +20,12 @@ describe LuckyRecord::Query do
       insert_a_user
       UserQuery.new.first.name.should eq "Paul"
     end
+
+    it "raises RecordNotFound if no record is found" do
+      expect_raises(LuckyRecord::RecordNotFoundError, "") do
+        UserQuery.new.first
+      end
+    end
   end
 
   describe "#find" do
