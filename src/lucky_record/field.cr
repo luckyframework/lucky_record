@@ -26,10 +26,11 @@ class LuckyRecord::Field(T)
   end
 
   def value
-    if @value.is_a?(String) && @value.blank?
+    value = @value
+    if value.is_a?(String) && value.blank?
       nil
     else
-      @value
+      value
     end
   end
 
