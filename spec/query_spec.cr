@@ -184,24 +184,30 @@ describe LuckyRecord::Query do
     end
   end
 
-  # how should I test these methods?
-  pending "#joins methods for associations" do
-    it "inner joins on belongs to" do
+  describe "#join methods for associations" do
+    it "inner join on belongs to" do
       insert_a_post
       post = Post::BaseQuery.new.first
       insert_a_comment(post.id)
 
-      result = Comment::BaseQuery.new.join_posts.first # creates join_post at the moment
+      query = Comment::BaseQuery.new.join_posts
+      query.to_sql.should eq ["SELECT comments.id, comments.created_at, comments.updated_at, comments.body, comments.post_id FROM comments INNER JOIN posts ON comments.id = posts.id"]
+
+      result = query.first
       result.post.should eq post
     end
 
-    it "inner joins on has many" do
+    it "inner join on has many" do
       insert_a_post
       post = Post::BaseQuery.new.first
+
       insert_a_comment(post.id)
       comment = Comment::BaseQuery.new.first
 
-      result = Post::BaseQuery.new.join_comments.first
+      query = Post::BaseQuery.new.join_comments
+      query.to_sql.should eq ["SELECT posts.id, posts.created_at, posts.updated_at, posts.title FROM posts INNER JOIN comments ON posts.id = comments.post_id"]
+
+      result = query.first
       result.comments.first.should eq comment
     end
   end

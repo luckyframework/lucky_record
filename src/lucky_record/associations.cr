@@ -14,9 +14,6 @@ module LuckyRecord::Associations
 
   macro belongs_to(type_declaration)
     {% assoc_name = type_declaration.var }
-    {% LuckyInflector::Inflector.pluralize assoc_name %} # Can't get this to work...
-
-    association {{ assoc_name }}, :id
 
     {% if type_declaration.type.is_a?(Union) %}
       {% model = type_declaration.type.types.first %}
@@ -27,6 +24,8 @@ module LuckyRecord::Associations
     {% end %}
 
     field {{ assoc_name.id }}_id : Int32{% if nilable %}?{% end %}
+
+    association {{ model.resolve.constant(:TABLE_NAME).id }}, :id
 
     def {{ assoc_name.id }}
       {{ assoc_name.id }}_id.try do |value|
