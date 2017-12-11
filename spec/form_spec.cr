@@ -203,6 +203,14 @@ describe "LuckyRecord::Form" do
       form.name.value.should eq "Joe"
       form.name.errors.should eq ["wrong"]
     end
+
+    it "Field#value returns nil on empty strings" do
+      empty_string = LuckyRecord::Field.new(:blank, nil, " ", "test_form")
+      empty_string.value.should be_nil
+
+      empty_array = LuckyRecord::Field.new(:empty_array, nil, [] of String, "test_form")
+      empty_array.value.should_not be_nil
+    end
   end
 
   describe ".save" do
