@@ -1,5 +1,3 @@
-require "lucky_inflector"
-
 module LuckyRecord
   # = Lucky Record Errors
   #
@@ -7,17 +5,14 @@ module LuckyRecord
   class LuckyRecordError < Exception
   end
 
-  # Raised when Lucky Record cannot find a record by given id
+  # Raised when a record could not be find
   class RecordNotFoundError < LuckyRecordError
     def initialize(@model : Symbol, @id : String)
       super "Could not find #{model} with id of #{id}"
     end
-  end
 
-  # Raised when Lucky Record cannot find a record by a query_method like #first or #last
-  class RecordNotFoundError < LuckyRecordError
     def initialize(@model : Symbol, @id : Symbol)
-      super "Could not find #{id} #{LuckyInflector::Inflector.singularize(model)}"
+      super "Could not find #{@id} record in #{model}"
     end
   end
 
