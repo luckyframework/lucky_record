@@ -5,7 +5,7 @@ module LuckyRecord
   class LuckyRecordError < Exception
   end
 
-  # Raised when a record could not be find
+  # Raised when a record could not be found
   class RecordNotFoundError < LuckyRecordError
     def initialize(@model : Symbol, @id : String)
       super "Could not find #{model} with id of #{id}"
