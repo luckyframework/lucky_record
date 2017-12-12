@@ -186,7 +186,7 @@ describe LuckyRecord::Query do
 
   describe "#join methods for associations" do
     it "inner join on belongs to" do
-      post = PostBox.new.save
+      post = PostBox.save
       comment = CommentBox.new.post_id(post.id).save!
 
       query = Comment::BaseQuery.new.join_posts
@@ -197,7 +197,7 @@ describe LuckyRecord::Query do
     end
 
     it "inner join on has many" do
-      post = PostBox.new.save
+      post = PostBox.save
       comment = CommentBox.new.post_id(post.id).save!
 
       query = Post::BaseQuery.new.join_comments
