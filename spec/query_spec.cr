@@ -186,9 +186,8 @@ describe LuckyRecord::Query do
 
   describe "#join methods for associations" do
     it "inner join on belongs to" do
-      insert_a_post
-      post = Post::BaseQuery.new.first
-      insert_a_comment(post.id)
+      post = PostBox.new.save
+      comment = CommentBox.new.post_id(post.id).save!
 
       query = Comment::BaseQuery.new.join_posts
       query.to_sql.should eq ["SELECT comments.id, comments.created_at, comments.updated_at, comments.body, comments.post_id FROM comments INNER JOIN posts ON comments.id = posts.id"]
@@ -198,11 +197,8 @@ describe LuckyRecord::Query do
     end
 
     it "inner join on has many" do
-      insert_a_post
-      post = Post::BaseQuery.new.first
-
-      insert_a_comment(post.id)
-      comment = Comment::BaseQuery.new.first
+      post = PostBox.new.save
+      comment = CommentBox.new.post_id(post.id).save!
 
       query = Post::BaseQuery.new.join_comments
       query.to_sql.should eq ["SELECT posts.id, posts.created_at, posts.updated_at, posts.title FROM posts INNER JOIN comments ON posts.id = comments.post_id"]
@@ -220,25 +216,6 @@ private def insert_a_user(name = "Paul", age = 34)
       Time.now,
       Time.now,
       age,
-      Time.now
-  end
-end
-
-private def insert_a_post(title = "Fast as C")
-  LuckyRecord::Repo.run do |db|
-    db.exec "INSERT INTO posts(title, created_at, updated_at) VALUES ($1, $2, $3)",
-      title,
-      Time.now,
-      Time.now
-  end
-end
-
-private def insert_a_comment(post_id, body = "Slick as Ruby")
-  LuckyRecord::Repo.run do |db|
-    db.exec "INSERT INTO comments(post_id, body, created_at, updated_at) VALUES ($1, $2, $3, $4)",
-      post_id,
-      body,
-      Time.now,
       Time.now
   end
 end
