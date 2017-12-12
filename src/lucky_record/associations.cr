@@ -1,10 +1,8 @@
-require "lucky_inflector"
-
 module LuckyRecord::Associations
   macro has_many(type_declaration)
     {% assoc_name = type_declaration.var }
 
-    association {{ assoc_name }}
+    association table_name: {{ assoc_name }}
 
     {% model = type_declaration.type %}
     def {{ assoc_name.id }}
@@ -25,7 +23,7 @@ module LuckyRecord::Associations
 
     field {{ assoc_name.id }}_id : Int32{% if nilable %}?{% end %}
 
-    association {{ model.resolve.constant(:TABLE_NAME).id }}, :id
+    association table_name: {{ model.resolve.constant(:TABLE_NAME).id }}, foreign_key: :id
 
     def {{ assoc_name.id }}
       {{ assoc_name.id }}_id.try do |value|
