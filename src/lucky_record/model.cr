@@ -100,7 +100,7 @@ class LuckyRecord::Model
     end
   end
 
-  macro association(associated_table, foreign_key = nil)
-    {% ASSOCIATIONS << {name: associated_table, foreign_key: foreign_key} %}
+  macro association(table_name, foreign_key = nil)
+    {% ASSOCIATIONS << {name: table_name.id, foreign_key: foreign_key} %}
   end
 end
