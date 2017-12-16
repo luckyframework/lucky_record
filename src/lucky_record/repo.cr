@@ -45,6 +45,24 @@ class LuckyRecord::Repo
     rows
   end
 
+  def self.table_columns(table_name)
+    statement = <<-SQL
+    SELECT column_name as name, is_nullable::boolean as nilable
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = '#{table_name}'
+    SQL
+
+    run { |db| db.query_all statement, as: TableColumn }
+  end
+
+  class TableColumn
+    DB.mapping({
+      name: String,
+      nilable: Bool
+    })
+  end
+
   class DatabaseCleaner
     def truncate
       table_names = LuckyRecord::Repo.table_names
