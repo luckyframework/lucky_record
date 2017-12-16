@@ -127,7 +127,6 @@ describe LuckyRecord::Model do
   end
 
   describe ".ensure_correct_field_mappings" do
-<<<<<<< ba7d5f6c5ce8c3a3c3fd376d2c16aad681ba244d
     it "raises on missing table" do
       missing_table = MissingTable.new(1, Time.new, Time.new)
       expect_raises Exception, "The table 'definitely_a_missing_table' was not found." do
@@ -174,53 +173,5 @@ describe LuckyRecord::Model do
         user.ensure_correct_field_mappings!
       end
     end
-=======
-    # table is missing
-    it "raises on missing table" do
-      missing_table = MissingTable.new(1, Time.new, Time.new)
-      expect_raises Exception, "The table uusers was not found, did you mean users?" do
-        missing_table.ensure_correct_field_mappings!
-      end
-    end
-
-    # field defined in model without a matching column in table
-<<<<<<< 784521ce72406ee0d7115fa6eccbfa9fdac96c18
-    # field is optional but column on table is marked as NOT NULL
-    # field is required but the column does not have NOT NULL
->>>>>>> Create ensure_existing_table! method.
-=======
-    it "raises on fields with missing columns and mismatched nilable" do
-      now = Time.now
-      user = MissingColumn.new id: 1,
-        created_at: now,
-        updated_at: now,
-        missing: "missing"
-      expect_raises Exception, "The table users does not have a 'missing' column. Make sure you've added it to the migration." do
-        user.ensure_correct_field_mappings!
-      end
-    end
-
-    it "raises on fields with nilable values not matching database columns" do
-      now = Time.now
-      user = OptionalFieldOnRequiredColumn.new id: 1,
-        created_at: now,
-        updated_at: now,
-        name: "Mikias"
-      expect_raises Exception, "name is marked as nilable (name : String?), but the database column does not allow nils." do
-        user.ensure_correct_field_mappings!
-      end
-    end
-
-    it "raises on fields with nilable values not matching database columns" do
-      now = Time.now
-      user = RequiredFieldOnOptionalColumn.new id: 1,
-        created_at: now,
-        updated_at: now,
-        nickname: "Miki"
-      expect_raises Exception, "nickname is marked as required (nickname : String), but the database column it not." do
-        user.ensure_correct_field_mappings!
-      end
-    end
->>>>>>> Add checks for missing columns, optional and required field errors
   end
 end
