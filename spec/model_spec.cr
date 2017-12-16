@@ -9,6 +9,29 @@ private class QueryMe < LuckyRecord::Model
   end
 end
 
+# USERS
+# id serial PRIMARY KEY,
+# name text NOT NULL,
+# created_at timestamp NOT NULL,
+# updated_at timestamp NOT NULL,
+# age int NOT NULL,
+# nickname text,
+# joined_at timestamp NOT NULL
+private class IncorrectFieldMappings < LuckyRecord::Model
+  COLUMNS = "users.id, users.created_at, users.updated_at, users.name, users.age, users.nickname"
+
+  table users do
+    field name : String
+    field age : Int32
+    field nickname : String
+  end
+end
+
+private class MissingTable < LuckyRecord::Model
+  table uusers do
+  end
+end
+
 private class EmptyModelCompilesOk < LuckyRecord::Model
   table no_fields do
   end
@@ -96,5 +119,18 @@ describe LuckyRecord::Model do
     it "returns list of mapped fields" do
       QueryMe.column_names.should eq [:id, :created_at, :updated_at, :email, :age]
     end
+  end
+
+  describe ".ensure_correct_field_mappings" do
+    # table is missing
+    it "raises on missing table" do
+      missing_table = MissingTable.new(1, Time.new, Time.new)
+      expect_raises Exception, "The table uusers was not found, did you mean users?" do
+        missing_table.ensure_correct_field_mappings!
+      end
+    end
+    # field defined in model without a matching column in table
+    # field is optional but column on table is marked as NOT NULL
+    # field is required but the column does not have NOT NULL
   end
 end
