@@ -131,7 +131,7 @@ describe LuckyRecord::Model do
     end
 
     # field defined in model without a matching column in table
-    it "raises on fields with missing columns and mismatched nilable" do
+    it "raises on fields with missing columns" do
       now = Time.now
       user = MissingColumn.new id: 1,
         created_at: now,
@@ -142,7 +142,7 @@ describe LuckyRecord::Model do
       end
     end
 
-    it "raises on fields with nilable values not matching database columns" do
+    it "raises on nilable fields with required columns" do
       now = Time.now
       user = OptionalFieldOnRequiredColumn.new id: 1,
         created_at: now,
@@ -153,7 +153,7 @@ describe LuckyRecord::Model do
       end
     end
 
-    it "raises on fields with nilable values not matching database columns" do
+    it "raises on required fields with nilable columns" do
       now = Time.now
       user = RequiredFieldOnOptionalColumn.new id: 1,
         created_at: now,
