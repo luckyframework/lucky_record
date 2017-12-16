@@ -58,8 +58,8 @@ class LuckyRecord::Repo
 
   class TableColumn
     DB.mapping({
-      name: String,
-      nilable: Bool
+      name:    String,
+      nilable: Bool,
     })
   end
 
