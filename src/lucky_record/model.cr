@@ -110,8 +110,17 @@ class LuckyRecord::Model
     {% ASSOCIATIONS << {name: table_name.id, foreign_key: foreign_key} %}
   end
 
-  def ensure_correct_field_mappings!
-    ensure_existing_table!
+  macro setup_correct_field_mappings_method
+    def ensure_correct_field_mappings!
+      ensure_existing_table!
+
+      fields = [
+        {% for field in FIELDS %}
+          { name: :{{field[:name]}}, nilable: {{ field[:nilable] }}, type: {{ field[:type] }} },
+        {% end %}
+      ]
+      ensure_fields_match_columns! fields
+    end
   end
 
   def ensure_existing_table!
@@ -126,5 +135,64 @@ class LuckyRecord::Model
     end
 
     raise message
+  end
+
+  def ensure_fields_match_columns!(fields)
+    columns_map = Hash(String, Bool).new
+    LuckyRecord::Repo.table_columns(@@table_name).each do |column|
+      columns_map[column.name] = column.nilable
+    end
+
+    missing_columns = [] of String
+    optional_field_errors = [] of String
+    required_field_errors = [] of String
+
+    fields.each do |field|
+      unless columns_map.has_key? field[:name].to_s
+        missing_columns << missing_field_error(field)
+        next
+      end
+
+      if !field[:nilable] && columns_map[field[:name].to_s]
+        required_field_errors << required_field_error(field)
+      elsif field[:nilable] && !columns_map[field[:name].to_s]
+        optional_field_errors << optional_field_error(field)
+      end
+    end
+
+    if missing_columns.empty? && optional_field_errors.empty? &&required_field_errors.empty?
+      return
+    end
+
+    message = missing_columns + optional_field_errors + required_field_errors
+
+    raise message.join("\n\n")
+  end
+
+  private def missing_field_error(field)
+    "The table #{@@table_name} does not have a '#{field[:name]}' column. Make sure you've added it to the migration."
+  end
+
+  private def optional_field_error(field)
+    <<-ERROR
+    #{field[:name]} is marked as nilable (#{field[:name]} : #{field[:type]}?), but the database column does not allow nils.
+
+    Try this...
+
+      * Mark #{field[:name]} as non-nilable in your model: #{field[:name]} : #{field[:type]}
+      * Or, change the column in a migration to allow nils: make_optional :users, :#{field[:name]}
+
+    ERROR
+  end
+
+  private def required_field_error(field)
+    <<-ERROR
+    #{field[:name]} is marked as required (#{field[:name]} : #{field[:type]}), but the database column it not.
+
+    Try this...
+
+      * Mark #{field[:name]} as nilable in your model: #{field[:name]} : #{field[:type]}?
+      * Or, change the column in a migration to allow nils: make_optional :#{@@table_name}, :#{field[:name]}
+    ERROR
   end
 end

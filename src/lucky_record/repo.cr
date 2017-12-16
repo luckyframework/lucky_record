@@ -58,13 +58,8 @@ class LuckyRecord::Repo
 
   class TableColumn
     DB.mapping({
-<<<<<<< b8471d03a00a0d93a467b9618a1b5c2c7ab10206
       name:    String,
       nilable: Bool,
-=======
-      name: String,
-      nilable: Bool
->>>>>>> Create table_columns method with TableColumn class
     })
   end
 
