@@ -109,4 +109,22 @@ class LuckyRecord::Model
   macro association(table_name, foreign_key = nil)
     {% ASSOCIATIONS << {name: table_name.id, foreign_key: foreign_key} %}
   end
+
+  def ensure_correct_field_mappings!
+    ensure_existing_table!
+  end
+
+  def ensure_existing_table!
+    table_names = LuckyRecord::Repo.tables_with_schema(excluding: "migrations")
+    return if table_names.includes?(@@table_name.to_s)
+
+    best_match = Levenshtein::Finder.find @@table_name.to_s, table_names, tolerance: 4
+    message = "The table #{@@table_name} was not found"
+
+    if best_match
+      message += ", did you mean #{best_match}?"
+    end
+
+    raise message
+  end
 end
