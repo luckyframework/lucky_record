@@ -9,20 +9,20 @@ private class QueryMe < LuckyRecord::Model
   end
 end
 
-# USERS
-# id serial PRIMARY KEY,
-# name text NOT NULL,
-# created_at timestamp NOT NULL,
-# updated_at timestamp NOT NULL,
-# age int NOT NULL,
-# nickname text,
-# joined_at timestamp NOT NULL
-private class IncorrectFieldMappings < LuckyRecord::Model
-  COLUMNS = "users.id, users.created_at, users.updated_at, users.name, users.age, users.nickname"
-
+private class MissingColumn < LuckyRecord::Model
   table users do
-    field name : String
-    field age : Int32
+    field missing : String
+  end
+end
+
+private class OptionalFieldOnRequiredColumn < LuckyRecord::Model
+  table users do
+    field name : String?
+  end
+end
+
+private class RequiredFieldOnOptionalColumn < LuckyRecord::Model
+  table users do
     field nickname : String
   end
 end
@@ -129,8 +129,39 @@ describe LuckyRecord::Model do
         missing_table.ensure_correct_field_mappings!
       end
     end
+
     # field defined in model without a matching column in table
-    # field is optional but column on table is marked as NOT NULL
-    # field is required but the column does not have NOT NULL
+    it "raises on fields with missing columns and mismatched nilable" do
+      now = Time.now
+      user = MissingColumn.new id: 1,
+        created_at: now,
+        updated_at: now,
+        missing: "missing"
+      expect_raises Exception, "The table users does not have a 'missing' column. Make sure you've added it to the migration." do
+        user.ensure_correct_field_mappings!
+      end
+    end
+
+    it "raises on fields with nilable values not matching database columns" do
+      now = Time.now
+      user = OptionalFieldOnRequiredColumn.new id: 1,
+        created_at: now,
+        updated_at: now,
+        name: "Mikias"
+      expect_raises Exception, "name is marked as nilable (name : String?), but the database column does not allow nils." do
+        user.ensure_correct_field_mappings!
+      end
+    end
+
+    it "raises on fields with nilable values not matching database columns" do
+      now = Time.now
+      user = RequiredFieldOnOptionalColumn.new id: 1,
+        created_at: now,
+        updated_at: now,
+        nickname: "Miki"
+      expect_raises Exception, "nickname is marked as required (nickname : String), but the database column it not." do
+        user.ensure_correct_field_mappings!
+      end
+    end
   end
 end
