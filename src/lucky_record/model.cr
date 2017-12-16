@@ -181,7 +181,6 @@ class LuckyRecord::Model
 
       * Mark #{field[:name]} as non-nilable in your model: #{field[:name]} : #{field[:type]}
       * Or, change the column in a migration to allow nils: make_optional :users, :#{field[:name]}
-
     ERROR
   end
 
