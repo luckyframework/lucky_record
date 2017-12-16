@@ -127,6 +127,7 @@ describe LuckyRecord::Model do
   end
 
   describe ".ensure_correct_field_mappings" do
+<<<<<<< ba7d5f6c5ce8c3a3c3fd376d2c16aad681ba244d
     it "raises on missing table" do
       missing_table = MissingTable.new(1, Time.new, Time.new)
       expect_raises Exception, "The table 'definitely_a_missing_table' was not found." do
@@ -173,5 +174,17 @@ describe LuckyRecord::Model do
         user.ensure_correct_field_mappings!
       end
     end
+=======
+    # table is missing
+    it "raises on missing table" do
+      missing_table = MissingTable.new(1, Time.new, Time.new)
+      expect_raises Exception, "The table uusers was not found, did you mean users?" do
+        missing_table.ensure_correct_field_mappings!
+      end
+    end
+    # field defined in model without a matching column in table
+    # field is optional but column on table is marked as NOT NULL
+    # field is required but the column does not have NOT NULL
+>>>>>>> Create ensure_existing_table! method.
   end
 end
