@@ -18,7 +18,7 @@ struct Int32
     end
 
     def self.to_db(value : Int32)
-      value.to_s
+      value
     end
 
     class Criteria(T, V) < LuckyRecord::Criteria(T, V)

@@ -22,7 +22,7 @@ module LuckyRecord::Queryable(T)
   end
 
   def where(column, value)
-    query.where(LuckyRecord::Where::Equal.new(column, value.to_s))
+    query.where(LuckyRecord::Where::Equal.new(column, value))
     self
   end
 
