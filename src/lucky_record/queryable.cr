@@ -55,6 +55,12 @@ module LuckyRecord::Queryable(T)
     exec_query.first? || raise RecordNotFoundError.new(model: @@table_name, query: :last)
   end
 
+  def last?
+    last
+  rescue RecordNotFoundError
+    nil
+  end
+
   def count : Int64
     query.count
     exec_scalar.as(Int64)
