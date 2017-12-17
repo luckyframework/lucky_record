@@ -50,6 +50,12 @@ module LuckyRecord::Queryable(T)
     exec_query.first? || raise RecordNotFoundError.new(model: @@table_name, query: :first)
   end
 
+  def first?
+    first
+  rescue RecordNotFoundError
+    nil
+  end
+
   def last
     ordered_query.reverse_order.limit(1)
     exec_query.first? || raise RecordNotFoundError.new(model: @@table_name, query: :last)
