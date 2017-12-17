@@ -208,18 +208,22 @@ abstract class LuckyRecord::Form(T)
   private def insert
     self.created_at.value = Time.now
     self.updated_at.value = Time.now
-    @record = LuckyRecord::Repo.run do |db|
-      db.query insert_sql.statement, insert_sql.args do |rs|
-        @@schema_class.from_rs(rs)
-      end.first
+    LuckyRecord::Repo.run do |db|
+      db.transaction do |tx|
+        tx.connection.query insert_sql.statement, insert_sql.args do |rs|
+          @record = @@schema_class.from_rs(rs).first
+        end
+      end
     end
   end
 
   private def update(id)
-    @record = LuckyRecord::Repo.run do |db|
-      db.query update_query(id).statement_for_update(changes), update_query(id).args_for_update(changes) do |rs|
-        @@schema_class.from_rs(rs)
-      end.first
+    LuckyRecord::Repo.run do |db|
+      db.transaction do |tx|
+        tx.connection.query update_query(id).statement_for_update(changes), update_query(id).args_for_update(changes) do |rs|
+          @record = @@schema_class.from_rs(rs).first
+        end
+      end
     end
   end
 
