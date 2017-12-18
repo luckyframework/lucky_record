@@ -126,10 +126,10 @@ class LuckyRecord::Model
     return if table_names.includes?(@@table_name.to_s)
 
     best_match = Levenshtein::Finder.find @@table_name.to_s, table_names, tolerance: 4
-    message = "The table #{@@table_name} was not found"
+    message = "The table '#{@@table_name}' was not found"
 
     if best_match
-      message += ", did you mean #{best_match}?"
+      message += ", did you mean '#{best_match}'?"
     end
 
     raise message
@@ -168,7 +168,7 @@ class LuckyRecord::Model
   end
 
   private def missing_field_error(field)
-    "The table #{@@table_name} does not have a '#{field[:name]}' column. Make sure you've added it to the migration."
+    "The table '#{@@table_name}' does not have a '#{field[:name]}' column. Make sure you've added it to a migration."
   end
 
   private def optional_field_error(field)
@@ -184,7 +184,7 @@ class LuckyRecord::Model
 
   private def required_field_error(field)
     <<-ERROR
-    #{field[:name]} is marked as required (#{field[:name]} : #{field[:type]}), but the database column it not.
+    #{field[:name]} is marked as required (#{field[:name]} : #{field[:type]}), but the database column isn't.
 
     Try this...
 
