@@ -25,4 +25,11 @@ module LuckyRecord
       super "Invalid #{form_name}. Could not save #{@form_object}"
     end
   end
+
+  # Raised when an unimplemented or deprecated query is made.
+  class UnsupportedQueryError < LuckyRecordError
+    def initialize
+      super "Counting with limit or offset is not supported yet. Try calling `results.size` to count in Crystal instead."
+    end
+  end
 end

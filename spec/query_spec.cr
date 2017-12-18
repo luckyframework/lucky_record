@@ -158,12 +158,11 @@ describe LuckyRecord::Query do
     end
 
     it "raises when used with offset or limit" do
-      msg = "Counting with limit or offset is not supported yet. Try calling `results.size` to count in Crystal instead."
-      expect_raises Exception, msg do
+      expect_raises(LuckyRecord::UnsupportedQueryError) do
         UserQuery.new.limit(1).count
       end
 
-      expect_raises Exception, msg do
+      expect_raises(LuckyRecord::UnsupportedQueryError) do
         UserQuery.new.offset(1).count
       end
     end

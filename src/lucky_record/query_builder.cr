@@ -87,7 +87,7 @@ class LuckyRecord::QueryBuilder
 
   def count
     if @limit || @offset
-      raise "Counting with limit or offset is not supported yet. Try calling `results.size` to count in Crystal instead."
+      raise LuckyRecord::UnsupportedQueryError.new
     end
     @selections = "COUNT(*)"
     reset_order
