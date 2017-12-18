@@ -125,7 +125,7 @@ describe LuckyRecord::Model do
     # table is missing
     it "raises on missing table" do
       missing_table = MissingTable.new(1, Time.new, Time.new)
-      expect_raises Exception, "The table uusers was not found, did you mean users?" do
+      expect_raises Exception, "The table 'uusers' was not found, did you mean 'users'?" do
         missing_table.ensure_correct_field_mappings!
       end
     end
@@ -137,7 +137,7 @@ describe LuckyRecord::Model do
         created_at: now,
         updated_at: now,
         missing: "missing"
-      expect_raises Exception, "The table users does not have a 'missing' column. Make sure you've added it to the migration." do
+      expect_raises Exception, "The table 'users' does not have a 'missing' column. Make sure you've added it to a migration." do
         user.ensure_correct_field_mappings!
       end
     end
@@ -159,7 +159,7 @@ describe LuckyRecord::Model do
         created_at: now,
         updated_at: now,
         nickname: "Miki"
-      expect_raises Exception, "nickname is marked as required (nickname : String), but the database column it not." do
+      expect_raises Exception, "nickname is marked as required (nickname : String), but the database column isn't." do
         user.ensure_correct_field_mappings!
       end
     end
