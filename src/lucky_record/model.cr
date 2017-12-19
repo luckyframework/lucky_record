@@ -128,18 +128,20 @@ class LuckyRecord::Model
     return if table_names.includes?(@@table_name.to_s)
 
     best_match = Levenshtein::Finder.find @@table_name.to_s, table_names, tolerance: 4
-    message = "The table '#{@@table_name}' was not found"
+    message = "The table '#{@@table_name}' was not found."
 
     if best_match
-      message += ", did you mean '#{best_match}'?"
+      message += " Did you mean #{best_match}?"
     end
 
     raise message
   end
 
   def ensure_fields_match_columns!(fields)
+    columns = LuckyRecord::Repo.table_columns(@@table_name)
+
     columns_map = Hash(String, Bool).new
-    LuckyRecord::Repo.table_columns(@@table_name).each do |column|
+    columns.each do |column|
       columns_map[column.name] = column.nilable
     end
 
@@ -149,7 +151,7 @@ class LuckyRecord::Model
 
     fields.each do |field|
       unless columns_map.has_key? field[:name].to_s
-        missing_columns << missing_field_error(field)
+        missing_columns << missing_field_error(columns, field)
         next
       end
 
@@ -169,8 +171,15 @@ class LuckyRecord::Model
     raise message.join("\n\n")
   end
 
-  private def missing_field_error(field)
-    "The table '#{@@table_name}' does not have a '#{field[:name]}' column. Make sure you've added it to a migration."
+  private def missing_field_error(columns, missing_field)
+    message = "The table '#{@@table_name}' does not have a '#{missing_field[:name]}' column."
+    best_match = Levenshtein::Finder.find missing_field[:name].to_s, columns.map(&.name), tolerance: 4
+
+    if best_match
+      message += " Did you mean #{best_match}?"
+    else
+      message += " Make sure you've added it to a migration."
+    end
   end
 
   private def optional_field_error(field)
