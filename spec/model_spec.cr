@@ -169,7 +169,7 @@ describe LuckyRecord::Model do
         created_at: now,
         updated_at: now,
         nickname: "Miki"
-      expect_raises Exception, "'nickname' is marked as required (nickname : String), but the database allows nils." do
+      expect_raises Exception, "'nickname' is marked as required (nickname : String), but the database column allows nils." do
         user.ensure_correct_field_mappings!
       end
     end
