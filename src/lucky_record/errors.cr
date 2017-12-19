@@ -27,7 +27,7 @@ module LuckyRecord
   end
 
   # Raised when an unimplemented or deprecated query is made.
-  class UnsupportedSQLError < LuckyRecordError
+  class UnsupportedQueryError < LuckyRecordError
     def initialize
       super "Counting with limit or offset is not supported yet. Try calling 'results.size' on your query to count using Crystal instead of the database."
     end
