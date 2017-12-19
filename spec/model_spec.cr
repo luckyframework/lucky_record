@@ -9,9 +9,9 @@ private class QueryMe < LuckyRecord::Model
   end
 end
 
-private class MissingColumn < LuckyRecord::Model
+private class MissingButSimilarlyNamedColumn < LuckyRecord::Model
   table users do
-    field missing : String
+    field mickname : String
   end
 end
 
@@ -27,7 +27,7 @@ private class RequiredFieldOnOptionalColumn < LuckyRecord::Model
   end
 end
 
-private class MissingTable < LuckyRecord::Model
+private class MissingButSimilarlyNamedTable < LuckyRecord::Model
   table uusers do
   end
 end
@@ -122,22 +122,20 @@ describe LuckyRecord::Model do
   end
 
   describe ".ensure_correct_field_mappings" do
-    # table is missing
     it "raises on missing table" do
-      missing_table = MissingTable.new(1, Time.new, Time.new)
-      expect_raises Exception, "The table 'uusers' was not found, did you mean 'users'?" do
+      missing_table = MissingButSimilarlyNamedTable.new(1, Time.new, Time.new)
+      expect_raises Exception, "The table 'uusers' was not found. Did you mean users?" do
         missing_table.ensure_correct_field_mappings!
       end
     end
 
-    # field defined in model without a matching column in table
     it "raises on fields with missing columns" do
       now = Time.now
-      user = MissingColumn.new id: 1,
+      user = MissingButSimilarlyNamedColumn.new id: 1,
         created_at: now,
         updated_at: now,
-        missing: "missing"
-      expect_raises Exception, "The table 'users' does not have a 'missing' column. Make sure you've added it to a migration." do
+        mickname: "missing"
+      expect_raises Exception, "The table 'users' does not have a 'mickname' column. Did you mean nickname?" do
         user.ensure_correct_field_mappings!
       end
     end
