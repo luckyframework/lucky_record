@@ -87,7 +87,7 @@ class LuckyRecord::QueryBuilder
 
   def count
     if @limit || @offset
-      raise LuckyRecord::UnsupportedQueryError.new
+      raise LuckyRecord::UnsupportedSQLError.new
     end
     @selections = "COUNT(*)"
     reset_order

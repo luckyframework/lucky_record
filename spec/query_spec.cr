@@ -158,11 +158,11 @@ describe LuckyRecord::Query do
     end
 
     it "raises when used with offset or limit" do
-      expect_raises(LuckyRecord::UnsupportedQueryError) do
+      expect_raises(LuckyRecord::UnsupportedSQLError) do
         UserQuery.new.limit(1).count
       end
 
-      expect_raises(LuckyRecord::UnsupportedQueryError) do
+      expect_raises(LuckyRecord::UnsupportedSQLError) do
         UserQuery.new.offset(1).count
       end
     end
