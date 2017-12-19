@@ -37,7 +37,7 @@ describe LuckyRecord::Query do
 
       user = UserQuery.new.first?
       user.should_not be_nil
-      user && user.name.should eq "First"
+      user.not_nil!.name.should eq "First"
     end
 
     it "returns nil if no record found" do
