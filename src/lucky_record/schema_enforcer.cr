@@ -38,13 +38,16 @@ module LuckyRecord::SchemaEnforcer
   end
 
   class EnsureMatchingColumns
-    @columns : Array(LuckyRecord::Repo::TableColumn)
+    @columns_map = Hash(String, Bool).new
     @missing_columns = [] of String
     @optional_field_errors = [] of String
     @required_field_errors = [] of String
 
     def initialize(@table_name : Symbol)
-      @columns = LuckyRecord::Repo.table_columns(table_name)
+      columns = LuckyRecord::Repo.table_columns(table_name)
+      columns.each do |column|
+        @columns_map[column.name] = column.nilable
+      end
     end
 
     def ensure_matches!(fields)
@@ -60,19 +63,14 @@ module LuckyRecord::SchemaEnforcer
     end
 
     private def check_column_matches(field)
-      columns_map = Hash(String, Bool).new
-      @columns.each do |column|
-        columns_map[column.name] = column.nilable
-      end
-
-      unless columns_map.has_key? field[:name].to_s
-        @missing_columns << missing_field_error(@table_name, @columns, field)
+      unless @columns_map.has_key? field[:name].to_s
+        @missing_columns << missing_field_error(@table_name, @columns_map.keys, field)
         return
       end
 
-      if !field[:nilable] && columns_map[field[:name].to_s]
+      if !field[:nilable] && @columns_map[field[:name].to_s]
         @required_field_errors << required_field_error(@table_name, field)
-      elsif field[:nilable] && !columns_map[field[:name].to_s]
+      elsif field[:nilable] && !@columns_map[field[:name].to_s]
         @optional_field_errors << optional_field_error(@table_name, field)
       end
     end
@@ -81,9 +79,9 @@ module LuckyRecord::SchemaEnforcer
       @missing_columns.any? || @optional_field_errors.any? ||@required_field_errors.any?
     end
 
-    private def missing_field_error(table_name, columns, missing_field)
+    private def missing_field_error(table_name, column_names, missing_field)
       message = "The table '#{table_name}' does not have a '#{missing_field[:name]}' column."
-      best_match = Levenshtein::Finder.find missing_field[:name].to_s, columns.map(&.name), tolerance: 4
+      best_match = Levenshtein::Finder.find missing_field[:name].to_s, column_names, tolerance: 4
 
       if best_match
         message += " Did you mean #{best_match}?"
@@ -105,7 +103,7 @@ module LuckyRecord::SchemaEnforcer
 
     private def required_field_error(table_name, field)
       <<-ERROR
-      '#{field[:name]}' is marked as required (#{field[:name]} : #{field[:type]}), but the database allows nils.
+      '#{field[:name]}' is marked as required (#{field[:name]} : #{field[:type]}), but the database column allows nils.
 
       Try this...
 
