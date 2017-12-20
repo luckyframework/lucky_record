@@ -9,11 +9,7 @@ module LuckyRecord::Validations
     end
   end
 
-<<<<<<< 7c2ae832427e27335175359656ea927ee6717076
   private def validate_acceptance_of(field : AllowedField(Bool?) | Field(Bool?), message = "must be accepted")
-=======
-  private def validate_acceptance_of(field : AllowedField(Bool) | Field(Bool), message = "must be accepted")
->>>>>>> Run crystal tool format
     if field.value == false
       field.add_error message
     end
