@@ -76,7 +76,7 @@ module LuckyRecord::SchemaEnforcer
     end
 
     private def matching_error?
-      @missing_columns.any? || @optional_field_errors.any? ||@required_field_errors.any?
+      @missing_columns.any? || @optional_field_errors.any? || @required_field_errors.any?
     end
 
     private def missing_field_error(table_name, column_names, missing_field)
