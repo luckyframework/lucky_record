@@ -20,7 +20,6 @@ class LuckyRecord::Repo
   def self.table_names
     tables_with_schema(excluding: "schema_migrations")
   end
-<<<<<<< HEAD
 
   def self.tables_with_schema(excluding : String)
     select_rows <<-SQL
@@ -62,31 +61,6 @@ class LuckyRecord::Repo
       name:    String,
       nilable: Bool,
     })
-=======
-
-  def self.tables_with_schema(excluding : String)
-    select_rows <<-SQL
-    SELECT table_name
-    FROM information_schema.tables
-    WHERE table_schema='public'
-    AND table_type='BASE TABLE'
-    AND table_name != '#{excluding}';
-    SQL
-  end
-
-  def self.select_rows(statement)
-    rows = [] of String
-
-    run do |db|
-      db.query statement do |rs|
-        rs.each do
-          rows << rs.read(String)
-        end
-      end
-    end
-
-    rows
->>>>>>> 0e27298... Move select_rows and table_names methods to Repo class.
   end
 
   class DatabaseCleaner
