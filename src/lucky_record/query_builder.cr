@@ -4,6 +4,7 @@ class LuckyRecord::QueryBuilder
   @offset : Int32?
   @wheres = [] of LuckyRecord::Where::SqlClause
   @raw_wheres = [] of LuckyRecord::Where::Raw
+  @wheres_sql : String?
   @joins = [] of LuckyRecord::Join::SqlClause
   @orders = {
     asc:  [] of Symbol | String,
@@ -148,6 +149,10 @@ class LuckyRecord::QueryBuilder
   end
 
   private def wheres_sql
+    @wheres_sql ||= joined_wheres_queries
+  end
+
+  private def joined_wheres_queries
     if @wheres.any? || @raw_wheres.any?
       statements = @wheres.map(&.prepare(next_prepared_statement_placeholder))
       statements += @raw_wheres.map(&.to_sql)
