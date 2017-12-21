@@ -143,34 +143,33 @@ module LuckyRecord::Where
 
   class Raw
     @clause : String
-    getter :statement
 
-    def initialize(@statement : String, *args)
-      ensure_enough_bind_variables_for! *args
-      @clause = @statement
-      build_clause *args
+    def initialize(statement : String, *bind_vars)
+      ensure_enough_bind_variables_for!(statement, *bind_vars)
+      @clause = build_clause(statement, *bind_vars)
     end
 
     def to_sql
       @clause
     end
 
-    private def ensure_enough_bind_variables_for!(*args)
-      bind_vars = @statement.chars.select(&.== '?')
-      if bind_vars.size != args.size
-        raise "wrong number of bind variables (#{args.size} for #{bind_vars.size}) in #{@statement}"
+    private def ensure_enough_bind_variables_for!(statement, *bind_vars)
+      bindings = statement.chars.select(&.== '?')
+      if bindings.size != bind_vars.size
+        raise "wrong number of bind variables (#{bind_vars.size} for #{bindings.size}) in #{statement}"
       end
     end
 
-    private def build_clause(*args)
-      args.each do |arg|
+    private def build_clause(statement, *bind_vars)
+      bind_vars.each do |arg|
         if arg.is_a?(String) || arg.is_a?(Slice(UInt8))
           escaped = PG::EscapeHelper.escape_literal(arg)
         else
           escaped = arg
         end
-        @clause = @clause.sub('?', escaped)
+        statement = statement.sub('?', escaped)
       end
+      statement
     end
   end
 end

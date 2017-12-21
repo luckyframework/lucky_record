@@ -25,8 +25,8 @@ module LuckyRecord::Queryable(T)
     self
   end
 
-  def where(statement : String, *args)
-    query.raw_where(LuckyRecord::Where::Raw.new(statement, *args))
+  def where(statement : String, *bind_vars)
+    query.raw_where(LuckyRecord::Where::Raw.new(statement, *bind_vars))
     self
   end
 
