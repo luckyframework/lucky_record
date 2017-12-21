@@ -1,11 +1,5 @@
 require "./spec_helper"
 
-# class CredentialedUser < User
-#   table users do
-#     has_one sign_in_credential : SignInCredential
-#   end
-# end
-
 describe LuckyRecord::Model do
   it "gets the related records" do
     post = PostBox.save
