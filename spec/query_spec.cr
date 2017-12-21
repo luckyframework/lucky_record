@@ -126,6 +126,20 @@ describe LuckyRecord::Query do
     end
   end
 
+  describe "#raw_where" do
+    it "accepts multiple arguments and chains with #where and itself" do
+      query = UserQuery.new.where("first_name = ? AND last_name = ?", "Mikias", "Abera").where(:age, 26).query
+
+      query.statement.should eq "SELECT #{User::COLUMNS} FROM users WHERE age = $1 AND first_name = 'Mikias' AND last_name = 'Abera'"
+    end
+
+    it "raises when number of args don't match bind variables" do
+      expect_raises Exception, "wrong number of bind variables (2 for 1)" do
+        UserQuery.new.where("first_name = ?", "bound", "extra")
+      end
+    end
+  end
+
   describe "#limit" do
     it "adds a limit clause" do
       queryable = UserQuery.new.limit(2)
