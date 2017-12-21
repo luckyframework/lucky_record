@@ -163,9 +163,13 @@ abstract class LuckyRecord::Form(T)
     @performed = true
 
     if valid?
-      before_save
-      insert_or_update
-      after_save(record.not_nil!)
+      LuckyRecord::Repo.run do |db|
+        db.transaction do |tx|
+          before_save
+          insert_or_update(tx)
+          after_save(record.not_nil!)
+        end
+      end
       true
     else
       false
@@ -184,11 +188,11 @@ abstract class LuckyRecord::Form(T)
     save!
   end
 
-  private def insert_or_update
+  private def insert_or_update(tx : DB::Transaction)
     if record_id
-      update record_id
+      update tx, record_id
     else
-      insert
+      insert tx
     end
   end
 
@@ -205,21 +209,17 @@ abstract class LuckyRecord::Form(T)
 
   def after_save(_record : T); end
 
-  private def insert
+  private def insert(tx : DB::Transaction)
     self.created_at.value = Time.now
     self.updated_at.value = Time.now
-    @record = LuckyRecord::Repo.run do |db|
-      db.query insert_sql.statement, insert_sql.args do |rs|
-        @@schema_class.from_rs(rs)
-      end.first
+    tx.connection.query insert_sql.statement, insert_sql.args do |rs|
+      @record = @@schema_class.from_rs(rs).first
     end
   end
 
-  private def update(id)
-    @record = LuckyRecord::Repo.run do |db|
-      db.query update_query(id).statement_for_update(changes), update_query(id).args_for_update(changes) do |rs|
-        @@schema_class.from_rs(rs)
-      end.first
+  private def update(tx : DB::Transaction, id)
+    tx.connection.query update_query(id).statement_for_update(changes), update_query(id).args_for_update(changes) do |rs|
+      @record = @@schema_class.from_rs(rs).first
     end
   end
 

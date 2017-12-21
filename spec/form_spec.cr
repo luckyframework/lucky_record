@@ -15,6 +15,16 @@ end
 private class TaskForm < Task::BaseForm
 end
 
+private class UserCallbackForm < User::BaseForm
+  allow :id, :name, :age, :joined_at
+
+  def before_save
+    first = UserQuery.new.first
+    UserForm.new(first, name: "changed").save! # This doesn't use the same tx connection
+    id.value = first.id
+  end
+end
+
 describe "LuckyRecord::Form" do
   it "generates the correct form_name" do
     LimitedUserForm.new.form_name.should eq "limited_user"
@@ -224,6 +234,21 @@ describe "LuckyRecord::Form" do
           record.should be_nil
         end
       end
+    end
+  end
+
+  describe "saves in a transaction" do
+    it "runs in a transaction" do
+      params = {"name" => "New Name", "age" => "30", "joined_at" => now_as_string}
+      before = UserForm.new(params).save!
+
+      params = {"name" => "name", "age": "26", "joined_at": now_as_string}
+      expect_raises Exception, "" do
+        UserCallbackForm.new(params).save!
+      end
+
+      pp before
+      UserQuery.new.first.name.should eq "New Name"
     end
   end
 
