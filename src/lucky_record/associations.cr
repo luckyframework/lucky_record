@@ -3,10 +3,10 @@ module LuckyRecord::Associations
     LuckyRecord::Repo.settings.lazy_load_enabled
   end
 
-  macro has_many(type_declaration)
+  macro has_many(type_declaration, foreign_key = nil)
     {% assoc_name = type_declaration.var %}
 
-    association table_name: :{{ assoc_name }}
+    association table_name: :{{ assoc_name }}, foreign_key: {{ foreign_key }}
 
     {% model = type_declaration.type %}
     {% foreign_key = "#{@type.name.underscore}_id".id %}
