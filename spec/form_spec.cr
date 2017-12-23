@@ -15,6 +15,9 @@ end
 private class TaskForm < Task::BaseForm
 end
 
+private class PostForm < Post::BaseForm
+end
+
 describe "LuckyRecord::Form" do
   it "generates the correct form_name" do
     LimitedUserForm.new.form_name.should eq "limited_user"
@@ -139,6 +142,15 @@ describe "LuckyRecord::Form" do
       form.name.value.should eq params["name"]
       form.nickname.value.should eq user.nickname
       form.age.value.should eq user.age
+    end
+
+    it "records changes" do
+      user = UserBox.build
+      params = LuckyRecord::Params.new({"name" => nil})
+
+      form = UserForm.new(user, params)
+
+      form.changes.should eq({:name => nil})
     end
   end
 

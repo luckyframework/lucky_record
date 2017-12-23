@@ -31,7 +31,9 @@ class LuckyRecord::QueryBuilder
   end
 
   def args_for_update(params)
-    params.values.map(&.to_s) + prepared_statement_values
+    params.values.map do |value|
+      value.nil? ? nil : value.to_s
+    end + prepared_statement_values
   end
 
   private def set_sql_clause(params)

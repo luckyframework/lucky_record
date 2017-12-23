@@ -60,6 +60,17 @@ describe "LuckyRecord::QueryBuilder" do
       query.statement_for_update(params).should eq "UPDATE users SET first_name = $1, last_name = $2 WHERE id = $3 LIMIT 1 RETURNING *"
       query.args_for_update(params).should eq ["Paul", "Smith", "1"]
     end
+
+    it "can set columns to nil" do
+      params = {:published_at => nil}
+      query = LuckyRecord::QueryBuilder
+        .new(table: :posts)
+        .where(LuckyRecord::Where::Equal.new(:id, "1"))
+        .limit(1)
+
+      query.statement_for_update(params).should eq "UPDATE posts SET published_at = $1 WHERE id = $2 LIMIT 1 RETURNING *"
+      query.args_for_update(params).should eq [nil, "1"]
+    end
   end
 
   it "can be counted" do
