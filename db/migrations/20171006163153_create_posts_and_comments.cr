@@ -2,6 +2,7 @@ class CreatePostsAndComments::V20171006163153 < LuckyMigrator::Migration::V1
   def migrate
     create :posts do
       add title : String
+      add published_at : Time?
     end
 
     create :comments do
