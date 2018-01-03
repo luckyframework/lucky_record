@@ -6,13 +6,13 @@ module LuckyRecord::Associations
   macro has_many(type_declaration, foreign_key = nil)
     {% assoc_name = type_declaration.var %}
 
-    {% if foreign_key %}
-      {% foreign_key = foreign_key.id %}
-    {% else %}
+    {% unless foreign_key %}
       {% foreign_key = "#{@type.name.underscore}_id".id %}
     {% end %}
 
     association table_name: :{{ assoc_name }}, foreign_key: {{ foreign_key }}
+
+    {% foreign_key = foreign_key.id %}
 
     {% model = type_declaration.type %}
     @_preloaded_{{ assoc_name }} : Array({{ model }})?
