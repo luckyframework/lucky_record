@@ -35,6 +35,14 @@ describe "LuckyRecord::Form" do
     form.body.errors.size.should eq 0
   end
 
+  it "treats nil changes as nil and not an empty string" do
+    form = UserForm.new
+    form.name.value = nil
+
+    form.changes.has_key?(:name).should be_true
+    form.changes[:name].should be_nil
+  end
+
   describe "#errors" do
     it "includes errors for all form fields" do
       form = UserForm.new
@@ -82,10 +90,11 @@ describe "LuckyRecord::Form" do
 
   describe "parsing" do
     it "parse integers, time objects, etc." do
-      now = Time.now.at_beginning_of_minute
-      form = UserForm.new({"joined_at" => now.to_s("%FT%X%z")})
+      time = 1.day.ago.at_beginning_of_minute
+      form = UserForm.new({"joined_at" => time.to_s("%FT%X%z")})
 
-      form.joined_at.value.should eq now
+      form.joined_at.value.should eq time
+      form.joined_at.value.not_nil!.utc?.should be_true
     end
 
     it "gracefully handles bad inputs when parsing" do
@@ -210,7 +219,7 @@ describe "LuckyRecord::Form" do
       it "yields the form and the saved record" do
         params = {"joined_at" => now_as_string, "name" => "New Name", "age" => "30"}
         UserForm.create params do |form, record|
-          form.save_succeeded?.should be_true
+          form.saved?.should be_true
           record.is_a?(User).should be_true
         end
       end
@@ -243,11 +252,29 @@ describe "LuckyRecord::Form" do
       it "raises an exception" do
         params = {"name" => "", "age" => "30"}
 
-        expect_raises(
-          LuckyRecord::InvalidFormError(UserForm),
-          /Invalid UserForm. Could not save/) do
+        expect_raises LuckyRecord::InvalidFormError(UserForm) do
           UserForm.create!(params)
         end
+      end
+    end
+  end
+
+  describe "updating with no changes" do
+    it "works when there are no changes" do
+      create_user(name: "Old Name")
+      user = UserQuery.new.first
+      params = {} of String => String
+      UserForm.update user, with: params do |form, record|
+        form.saved?.should be_true
+      end
+    end
+
+    it "returns true when there are no changes" do
+      create_user(name: "Old Name")
+      user = UserQuery.new.first
+      params = {} of String => String
+      UserForm.new(user).tap do |form|
+        form.save.should be_true
       end
     end
   end
@@ -259,7 +286,7 @@ describe "LuckyRecord::Form" do
         user = UserQuery.new.first
         params = {"name" => "New Name"}
         UserForm.update user, with: params do |form, record|
-          form.save_succeeded?.should be_true
+          form.saved?.should be_true
           record.name.should eq "New Name"
         end
       end
@@ -298,9 +325,7 @@ describe "LuckyRecord::Form" do
         user = UserQuery.new.first
         params = {"name" => ""}
 
-        expect_raises(
-          LuckyRecord::InvalidFormError(UserForm),
-          /Invalid UserForm. Could not save/) do
+        expect_raises LuckyRecord::InvalidFormError(UserForm) do
           UserForm.update! user, with: params
         end
       end

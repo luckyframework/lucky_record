@@ -27,11 +27,21 @@ class LuckyRecord::QueryBuilder
   end
 
   def statement_for_update(params)
-    join_sql ["UPDATE #{table}", set_sql_clause(params)] + sql_condition_clauses + ["RETURNING *"]
+    join_sql ["UPDATE #{table}", set_sql_clause(params)] + sql_condition_clauses + ["RETURNING #{@selections}"]
   end
 
   def args_for_update(params)
-    params.values.map(&.to_s) + prepared_statement_values
+    param_values(params) + prepared_statement_values
+  end
+
+  private def param_values(params)
+    params.values.map do |value|
+      if value.nil?
+        nil
+      else
+        value.to_s
+      end
+    end
   end
 
   private def set_sql_clause(params)

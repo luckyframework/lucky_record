@@ -131,7 +131,7 @@ abstract class LuckyRecord::Form(T)
 
   abstract def after_prepare
 
-  def save_succeeded?
+  def saved?
     !save_failed?
   end
 
@@ -153,7 +153,11 @@ abstract class LuckyRecord::Form(T)
     _changes = {} of Symbol => String?
     database_fields.each do |field|
       if field.changed?
-        _changes[field.name] = field.value.to_s
+        _changes[field.name] = if field.value.nil?
+                                 nil
+                               else
+                                 field.value.to_s
+                               end
       end
     end
     _changes
@@ -162,13 +166,13 @@ abstract class LuckyRecord::Form(T)
   def save : Bool
     @performed = true
 
-    if valid?
+    if valid? && changes.any?
       before_save
       insert_or_update
       after_save(record.not_nil!)
       true
     else
-      false
+      valid? && changes.empty?
     end
   end
 
@@ -176,7 +180,7 @@ abstract class LuckyRecord::Form(T)
     if save
       record.not_nil!
     else
-      raise LuckyRecord::InvalidFormError.new(form_name: typeof(self).to_s, form_object: self)
+      raise LuckyRecord::InvalidFormError(typeof(self)).new(form: self)
     end
   end
 
@@ -206,8 +210,8 @@ abstract class LuckyRecord::Form(T)
   def after_save(_record : T); end
 
   private def insert
-    self.created_at.value = Time.now
-    self.updated_at.value = Time.now
+    self.created_at.value = Time.utc_now
+    self.updated_at.value = Time.utc_now
     @record = LuckyRecord::Repo.run do |db|
       db.query insert_sql.statement, insert_sql.args do |rs|
         @@schema_class.from_rs(rs)
@@ -226,10 +230,11 @@ abstract class LuckyRecord::Form(T)
   private def update_query(id)
     LuckyRecord::QueryBuilder
       .new(table_name)
+      .select(@@schema_class.column_names)
       .where(LuckyRecord::Where::Equal.new(:id, id.to_s))
   end
 
   private def insert_sql
-    LuckyRecord::Insert.new(table_name, changes)
+    LuckyRecord::Insert.new(table_name, changes, @@schema_class.column_names)
   end
 end
