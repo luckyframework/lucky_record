@@ -3,7 +3,7 @@ module LuckyRecord::Callbacks(T)
     @@prepare_callbacks = [] of Proc(Nil)
     @@after_prepare_callbacks = [] of Proc(Nil)
     @@before_save_callbacks = [] of Proc(Nil)
-    @@after_save_callbacks = [] of Proc(T)
+    @@after_save_callbacks = [] of Proc(T, Nil)
   end
 
   def self.prepare(&block)
@@ -30,7 +30,7 @@ module LuckyRecord::Callbacks(T)
     @@before_save_callbacks.each(&.call)
   end
 
-  def self.after_save(&block)
+  def self.after_save(&block : T ->)
     @@after_save_callbacks << block
   end
 
