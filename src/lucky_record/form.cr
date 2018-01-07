@@ -5,6 +5,7 @@ abstract class LuckyRecord::Form(T)
   include LuckyRecord::Validations
   include LuckyRecord::NeedyInitializer
   include LuckyRecord::AllowVirtual
+  include LuckyRecord::Callbacks(T)
 
   enum SaveStatus
     Saved
@@ -239,15 +240,6 @@ abstract class LuckyRecord::Form(T)
   private def record_id
     @record.try &.id
   end
-
-  # Default callbacks
-  def prepare; end
-
-  def after_prepare; end
-
-  def before_save; end
-
-  def after_save(_record : T); end
 
   private def insert : T
     self.created_at.value = Time.utc_now
