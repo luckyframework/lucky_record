@@ -4,20 +4,20 @@ private class CallbacksForm < Post::BaseForm
   @callbacks_that_ran = [] of String
   getter callbacks_that_ran
 
-  def prepare
+  prepare do
     setup_required_fields
     mark_callback "prepare"
   end
 
-  def after_prepare
+  after_prepare do
     mark_callback "after_prepare"
   end
 
-  def before_save
+  before_save do
     mark_callback "before_save"
   end
 
-  def after_save(post : Post)
+  after_save do |post|
     mark_callback "after_save"
   end
 
