@@ -6,19 +6,19 @@ class LuckyRecord::Params
   def initialize(@hash = {} of String => String)
   end
 
+  def nested?(key)
+    @hash
+  end
+
   def nested(key)
     @hash
   end
 
-  def nested!(key)
-    @hash
-  end
-
-  def get(key)
+  def get?(key)
     @hash[key]?
   end
 
-  def get!(key)
+  def get(key)
     @hash[key]
   end
 end

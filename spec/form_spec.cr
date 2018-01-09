@@ -58,21 +58,22 @@ describe "LuckyRecord::Form" do
   end
 
   describe "save_failed?" do
-    it "is false if the object is invalid and performed an action" do
+    it "is true if the object is invalid and performed an action" do
       form = UserForm.new(name: "")
 
       form.save
 
       form.save_failed?.should be_true
-      form.performed?.should be_true
+      form.save_status.should eq(LuckyRecord::Form::SaveStatus::SaveFailed)
       form.valid?.should be_false
     end
 
-    it "is true if the object is invalid but no action was performed" do
+    it "is false if the object is not marked as saved but no action was performed" do
       form = UserForm.new(name: "")
 
       form.save_failed?.should be_false
-      form.performed?.should be_false
+      form.save_status.should eq(LuckyRecord::Form::SaveStatus::Unperformed)
+      form.saved?.should be_false
       form.valid?.should be_false
     end
   end
@@ -214,7 +215,7 @@ describe "LuckyRecord::Form" do
     end
   end
 
-  describe ".save" do
+  describe ".create" do
     context "on success" do
       it "yields the form and the saved record" do
         params = {"joined_at" => now_as_string, "name" => "New Name", "age" => "30"}
