@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-class KeyHolder < User
+class KeyHolder < LuckyRecord
   table users do
     has_many sign_in_credentials : SignInCredential, foreign_key: :user_id
   end
