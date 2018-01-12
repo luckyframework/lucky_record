@@ -12,8 +12,8 @@ end
 describe LuckyRecord::Model do
   describe "has_many" do
     it "gets the related records" do
-      user = UserBox.save
-      post = PostBox.new.user_id(user.id).save
+      employee = EmployeeBox.save
+      post = PostBox.new.employee_id(employee.id).save
       comment = CommentBox.new.post_id(post.id).save
 
       post = Post::BaseQuery.new.find(post.id)
@@ -48,11 +48,12 @@ describe LuckyRecord::Model do
     end
 
     it "accepts through option" do
-      user = UserBox.save
-      post = PostBox.new.user_id(user.id).save
+      manager = ManagerBox.save
+      employee = EmployeeBox.new.manager_id(manager.id).save
+      post = PostBox.new.employee_id(employee.id).save
       comment = CommentBox.new.post_id(post.id).save
 
-      user.comments.should eq [comment]
+      employee.comments.should eq [comment]
     end
   end
 

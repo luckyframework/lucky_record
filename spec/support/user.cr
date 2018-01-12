@@ -9,8 +9,6 @@ class User < LuckyRecord::Model
     column nickname : String?
     column joined_at : Time
     has_one sign_in_credential : SignInCredential?
-    has_many posts : Post
-    has_many comments : Comment, through: :posts
   end
 end
 
