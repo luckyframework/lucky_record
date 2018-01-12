@@ -19,6 +19,12 @@ describe LuckyRecord::Join do
     end
   end
 
+  describe "through option" do
+    it "::INNER" do
+      LuckyRecord::Join::Inner.new(:users, :comments, through: :posts).to_sql.should eq "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON posts.id = comments.post_id"
+    end
+  end
+
   it "allows custom to and from columns" do
     LuckyRecord::Join::Inner.new(:users, :posts, primary_key: :uid, foreign_key: :author_id)
                             .to_sql
