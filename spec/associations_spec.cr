@@ -12,7 +12,8 @@ end
 describe LuckyRecord::Model do
   describe "has_many" do
     it "gets the related records" do
-      post = PostBox.save
+      user = UserBox.save
+      post = PostBox.new.user_id(user.id).save
       comment = CommentBox.new.post_id(post.id).save
 
       post = Post::BaseQuery.new.find(post.id)
@@ -44,6 +45,14 @@ describe LuckyRecord::Model do
       key_holder = KeyHolderQuery.new.first
 
       key_holder.sign_in_credentials.should eq [cred_1, cred_2]
+    end
+
+    it "accepts through option" do
+      user = UserBox.save
+      post = PostBox.new.user_id(user.id).save
+      comment = CommentBox.new.post_id(post.id).save
+
+      user.comments.should eq [comment]
     end
   end
 
