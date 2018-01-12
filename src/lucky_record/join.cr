@@ -23,8 +23,7 @@ module LuckyRecord::Join
     end
 
     def through_join_statement
-      "#{join_type} JOIN #{@through} ON #{@from}.id = #{@through}.#{from_foreign_key} \
-      #{join_type} JOIN #{@to} ON #{@through}.id = #{@to}.#{through_foreign_key}"
+      "#{join_type} JOIN #{@through} ON #{@from}.id = #{@through}.#{from_foreign_key} #{join_type} JOIN #{@to} ON #{@through}.id = #{@to}.#{through_foreign_key}"
     end
 
     def direct_join_statement
