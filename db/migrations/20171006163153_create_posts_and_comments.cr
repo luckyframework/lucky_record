@@ -1,7 +1,7 @@
 class CreatePostsAndComments::V20171006163153 < LuckyMigrator::Migration::V1
   def migrate
     create :posts do
-      belongs_to Employee, on_delete: :do_nothing
+      belongs_to Employee?, on_delete: :do_nothing
       add title : String
     end
 
