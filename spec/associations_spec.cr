@@ -12,10 +12,9 @@ end
 describe LuckyRecord::Model do
   describe "has_many" do
     it "gets the related records" do
-      post = PostBox.save
+      employee = EmployeeBox.save
+      post = PostBox.new.employee_id(employee.id).save
       comment = CommentBox.new.post_id(post.id).save
-
-      post = Post::BaseQuery.new.find(post.id)
 
       post.comments.to_a.should eq [comment]
       comment.post.should eq post
@@ -44,6 +43,26 @@ describe LuckyRecord::Model do
       key_holder = KeyHolderQuery.new.first
 
       key_holder.sign_in_credentials.should eq [cred_1, cred_2]
+    end
+
+    it "accepts through option" do
+      manager = ManagerBox.save
+      employee = EmployeeBox.new.manager_id(manager.id).save
+      post = PostBox.new.employee_id(employee.id).save
+      comment = CommentBox.new.post_id(post.id).save
+
+      employee.comments.should eq [comment]
+    end
+  end
+
+  describe "belongs_to" do
+    it "gets the related records" do
+      employee = EmployeeBox.save
+      post = PostBox.new.employee_id(employee.id).save
+      comment = CommentBox.new.post_id(post.id).save
+
+      comment.post.should eq post
+      post.employee.should eq employee
     end
   end
 

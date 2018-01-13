@@ -38,11 +38,19 @@ class LuckyRecord::BaseQueryTemplate
         end
 
         def inner_join_{{ assoc[:name] }}
-          join(LuckyRecord::Join::Inner.new(@@table_name, :{{ assoc[:name] }}, foreign_key: {{ assoc[:foreign_key] }}))
+          {% if assoc[:through] %}
+            join(LuckyRecord::Join::Inner.new(@@table_name, :{{ assoc[:name] }}, through: {{ assoc[:through] }}))
+          {% else %}
+            join(LuckyRecord::Join::Inner.new(@@table_name, :{{ assoc[:name] }}, foreign_key: {{ assoc[:foreign_key] }}))
+          {% end %}
         end
 
         def left_join_{{ assoc[:name] }}
-          join(LuckyRecord::Join::Inner.new(@@table_name, :{{ assoc[:name] }}, foreign_key: {{ assoc[:foreign_key] }}))
+          if {{ assoc[:through] }}
+            join(LuckyRecord::Join::Left.new(@@table_name, :{{ assoc[:name] }}, through: {{ assoc[:through] }}))
+          else
+            join(LuckyRecord::Join::Left.new(@@table_name, :{{ assoc[:name] }}, foreign_key: {{ assoc[:foreign_key] }}))
+          end
         end
       {% end %}
     end

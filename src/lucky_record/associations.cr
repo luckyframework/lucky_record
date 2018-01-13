@@ -3,10 +3,10 @@ module LuckyRecord::Associations
     LuckyRecord::Repo.settings.lazy_load_enabled
   end
 
-  macro has_many(type_declaration, foreign_key = nil)
+  macro has_many(type_declaration, foreign_key = nil, through = nil)
     {% assoc_name = type_declaration.var %}
 
-    association table_name: :{{ assoc_name }}
+    association table_name: :{{ assoc_name }}, through: {{ through }}
 
     {% model = type_declaration.type %}
 
@@ -25,9 +25,16 @@ module LuckyRecord::Associations
       || raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
     end
 
+    # Tried: Comment::BaseQuery.new.join_posts.user_id(id)
+    # #=> undefined method 'user_id' for Comment::BaseQuery
+    # so resorted to using .where() query directly
     private def lazy_load_{{ assoc_name }} : Array({{ model }})?
       if lazy_load_enabled?
-        {{ model }}::BaseQuery.new.{{ foreign_key }}(id).results
+        {% if through %}
+          {{ model }}::BaseQuery.new.join_{{ through.id }}.where("{{ through.id }}.{{ foreign_key }} = #{id}").results
+        {% else %}
+          {{ model }}::BaseQuery.new.{{ foreign_key }}(id).results
+        {% end %}
       end
     end
 
