@@ -16,8 +16,6 @@ describe LuckyRecord::Model do
       post = PostBox.new.employee_id(employee.id).save
       comment = CommentBox.new.post_id(post.id).save
 
-      post = Post::BaseQuery.new.find(post.id)
-
       post.comments.to_a.should eq [comment]
       comment.post.should eq post
     end
@@ -54,6 +52,17 @@ describe LuckyRecord::Model do
       comment = CommentBox.new.post_id(post.id).save
 
       employee.comments.should eq [comment]
+    end
+  end
+
+  describe "belongs_to" do
+    it "gets the related records" do
+      employee = EmployeeBox.save
+      post = PostBox.new.employee_id(employee.id).save
+      comment = CommentBox.new.post_id(post.id).save
+
+      comment.post.should eq post
+      post.employee.should eq employee
     end
   end
 
