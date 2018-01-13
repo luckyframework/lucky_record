@@ -62,11 +62,22 @@ class LuckyRecord::Model
     DB.mapping({
       {% for field in FIELDS %}
         {{field[:name]}}: {
-          type: {{field[:type]}}::Lucky::ColumnType,
+          {% if "#{field[:type]}" == "Float64" %}
+            type: PG::Numeric,
+            convertor: Float64Convertor,
+          {% else %}
+            type: {{field[:type]}}::Lucky::ColumnType,
+          {% end %}
           nilable: {{field[:nilable]}},
         },
       {% end %}
     })
+  end
+
+  module Float64Converter
+    def self.from_rs(rs)
+      rs.read(PG::Numeric).to_f
+    end
   end
 
   macro setup_base_query_class(table_name)
