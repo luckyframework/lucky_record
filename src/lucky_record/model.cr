@@ -67,7 +67,7 @@ class LuckyRecord::Model
     DB.mapping({
       {% for field in FIELDS %}
         {{field[:name]}}: {
-          {% if "#{field[:type]}" == "Float64" %}
+          {% if field[:type] == Float64.id %}
             type: PG::Numeric,
             convertor: Float64Convertor,
           {% else %}
