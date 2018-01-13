@@ -24,16 +24,18 @@ describe "TypeExtensions" do
     company2.earnings.should eq 2.0
   end
 
-  it "should build and save forms" do
-    form = CompanyForm.new({"sales" => "10", "earnings" => "10.0"})
+  it "should convert params and save forms" do
+    form = CompanyForm.new({"sales" => "10", "earnings" => "10"})
     form.sales.value.should eq 10_i64
     form.earnings.value.should eq 10.0
   end
 
-  it "should query" do
+  it "Int64 and Float64 should allow querying with Int32" do
     CompanyBox.new.sales(10_i64).earnings(1.0).save
-    company = CompanyQuery.new.sales(10).earnings(1.0).first
-    company.sales.should eq 10_i64
-    company.earnings.should eq 1.0
+    using_sales = CompanyQuery.new.sales(10).first
+    using_sales.sales.should eq 10_i64
+
+    using_earnings = CompanyQuery.new.earnings(1).first
+    using_earnings.earnings.should eq 1.0
   end
 end
