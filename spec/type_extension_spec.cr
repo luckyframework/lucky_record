@@ -16,7 +16,7 @@ describe "TypeExtensions" do
   it "should work in boxes" do
     CompanyBox.save
     company = CompanyQuery.new.first
-    company.sales.should eq Int32::MAX + 1000
+    company.sales.should eq Int64::MAX
     company.earnings.should eq 1.0
 
     company2 = CompanyBox.new.sales(10_i64).earnings(2.0).save
