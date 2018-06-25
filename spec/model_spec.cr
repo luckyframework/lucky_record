@@ -178,7 +178,7 @@ describe LuckyRecord::Model do
 
   describe "models with uuids" do
     it "sets up initializers accepting uuid strings" do
-      LineItem.new(UUID.new("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11").to_s, Time.now, Time.now, "hello")
+      LineItem.new(UUID.new("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"), Time.now, Time.now, "hello")
     end
 
     it "can be saved" do
