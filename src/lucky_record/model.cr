@@ -3,7 +3,6 @@ require "levenshtein"
 require "uuid"
 require "./schema_enforcer"
 
-
 class LuckyRecord::Model
   include LuckyRecord::Associations
   include LuckyRecord::SchemaEnforcer
@@ -100,7 +99,7 @@ class LuckyRecord::Model
   end
 
   macro setup_base_form_class(table_name, primary_key_type)
-    LuckyRecord::BaseFormTemplate.setup({{ @type }}, {{ FIELDS }}, {{ table_name }}, {{primary_key_type}})
+    LuckyRecord::BaseFormTemplate.setup({{ @type }}, {{ FIELDS }}, {{ table_name }}, {{ primary_key_type }})
   end
 
   macro setup_getters
