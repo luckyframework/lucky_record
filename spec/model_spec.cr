@@ -1,4 +1,5 @@
 require "./spec_helper"
+require "uuid"
 
 private class QueryMe < LuckyRecord::Model
   COLUMNS = "users.id, users.created_at, users.updated_at, users.email, users.age"
@@ -172,6 +173,19 @@ describe LuckyRecord::Model do
       expect_raises Exception, "'nickname' is marked as required (nickname : String), but the database column allows nils." do
         user.ensure_correct_field_mappings!
       end
+    end
+  end
+
+  describe "models with uuids" do
+    it "sets up initializers accepting uuid strings" do
+      LineItem.new(UUID.new("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11").to_s, Time.now, Time.now, "hello")
+    end
+
+    it "can be saved" do
+      LineItemBox.create
+
+      item = LineItemQuery.new.first
+      item.id.should match(/\w/)
     end
   end
 end
