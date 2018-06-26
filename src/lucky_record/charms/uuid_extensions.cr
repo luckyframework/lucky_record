@@ -9,6 +9,8 @@ struct UUID
 
     def parse(value : String)
       SuccessfulCast(UUID).new(UUID.new(value))
+    rescue
+      FailedCast.new
     end
 
     def to_db(value : UUID)
