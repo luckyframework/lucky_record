@@ -150,7 +150,7 @@ abstract class LuckyRecord::Form(T)
       validate_required *required_fields
 
       {% if primary_key_type == :uuid %}
-        id.value = UUID.random() unless persisted?
+        id.value ||= UUID.random()
       {% end %}
     end
   end

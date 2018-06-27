@@ -313,6 +313,16 @@ describe "LuckyRecord::Form" do
         end
       end
     end
+
+    context "with a uuid backed model" do
+      it "can manually set a uuid" do
+        LineItemForm.create!(
+          id: UUID.new("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"),
+          name: "A fancy hat"
+        )
+        LineItemQuery.new.id("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11").select_count.should eq 1
+      end
+    end
   end
 
   describe "updating with no changes" do
