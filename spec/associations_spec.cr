@@ -90,5 +90,13 @@ describe LuckyRecord::Model do
         item.price.should eq price
       end
     end
+
+    describe "belongs_to" do
+      it "returns associated model" do
+        item = LineItemBox.create
+        price = PriceBox.new.line_item_id(item.id).create
+        price.line_item.should eq item
+      end
+    end
   end
 end
