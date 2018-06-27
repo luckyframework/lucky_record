@@ -285,6 +285,16 @@ describe "LuckyRecord::Form" do
         end
       end
     end
+
+    context "with a uuid backed model" do
+      it "can create with params" do
+        params = {"name" => "A fancy hat"}
+        LineItemForm.create params do |form, record|
+          form.saved?.should be_true
+          record.should be_a(LineItem)
+        end
+      end
+    end
   end
 
   describe ".create!" do
