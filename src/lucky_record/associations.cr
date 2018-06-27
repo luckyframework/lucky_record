@@ -214,7 +214,7 @@ module LuckyRecord::Associations
 
       def preload(preload_query : {{ model }}::BaseQuery)
         add_preload do |records|
-          ids = [] of Int32
+          ids = [] of {{ model.resolve.constant(:PRIMARY_KEY_TYPE_CLASS) }}
           records.each do |record|
             record.{{ foreign_key }}.try do |id|
               ids << id

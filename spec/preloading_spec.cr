@@ -142,6 +142,13 @@ describe "Preloading" do
     end
   end
 
+  it "preloads uuid associations" do
+    item = LineItemBox.create
+    price = PriceBox.new.line_item_id(item.id).create
+
+    PriceQuery.new.preload_line_item.first.line_item.should eq item
+  end
+
   it "uses preloaded records if available, even if lazy load is enabled" do
     with_lazy_load(enabled: true) do
       post = PostBox.create

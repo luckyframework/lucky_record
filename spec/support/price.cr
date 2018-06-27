@@ -6,3 +6,6 @@ class Price < LuckyRecord::Model
     belongs_to line_item : LineItem
   end
 end
+
+class PriceQuery < Price::BaseQuery
+end
