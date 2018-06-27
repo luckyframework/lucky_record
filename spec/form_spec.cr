@@ -21,6 +21,10 @@ private class ValidFormWithoutParams < Post::BaseForm
   end
 end
 
+private class LineItemForm < LineItem::BaseForm
+  fillable :name
+end
+
 describe "LuckyRecord::Form" do
   it "generates the correct form_name" do
     LimitedUserForm.new.form_name.should eq "limited_user"
@@ -360,6 +364,16 @@ describe "LuckyRecord::Form" do
         UserForm.update user, with: params do |form, record|
           form.save_failed?.should be_true
           record.name.should eq "Old Name"
+        end
+      end
+    end
+
+    context "with a uuid backed model" do
+      it "doesn't generate a new uuid" do
+        line_item = LineItemBox.create
+        LineItemForm.update(line_item, { "name" => "Another pair of shoes"}) do |form, record|
+          form.saved?.should be_true
+          record.id.should eq line_item.id
         end
       end
     end
