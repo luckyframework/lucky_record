@@ -172,7 +172,9 @@ module LuckyRecord::Associations
       {% nilable = false %}
     {% end %}
 
-    column {{ assoc_name.id }}_id : Int32{% if nilable %}?{% end %}
+    {% owner_id_type = model.resolve.constant(:FIELDS).select { |f| f[:name] == "id"}.first[:type] %}
+
+    column {{ assoc_name.id }}_id : {{ owner_id_type }}{% if nilable %}?{% end %}
 
     association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }}, type: {{ model }}, foreign_key: :id
 

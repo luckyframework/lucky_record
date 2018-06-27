@@ -1,4 +1,8 @@
 struct UUID
+  def blank?
+    false
+  end
+
   module Lucky
     alias ColumnType = String
     include LuckyRecord::Type
