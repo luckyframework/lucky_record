@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "uuid"
 
 private class QueryMe < LuckyRecord::Model
   COLUMNS = "users.id, users.created_at, users.updated_at, users.email, users.age"

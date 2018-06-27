@@ -1,6 +1,5 @@
 require "db"
 require "levenshtein"
-require "uuid"
 require "./schema_enforcer"
 
 class LuckyRecord::Model
