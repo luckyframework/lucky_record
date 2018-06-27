@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe String do
+describe "UUID column type" do
   describe ".parse" do
     it "casts a UUID successfully" do
       uuid = UUID.new("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
