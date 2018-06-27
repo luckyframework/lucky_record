@@ -3,6 +3,7 @@ class CreatePriceForLineItems::V20180627220827 < LuckyMigrator::Migration::V1
     # Needs support in lucky_migrator
     # create :prices, primary_key_type: :uuid do
     #   add in_cents : Int32
+    #   add line_item_id : UUID
     # end
     execute <<-SQL
       CREATE TABLE prices (

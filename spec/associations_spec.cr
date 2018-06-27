@@ -98,5 +98,14 @@ describe LuckyRecord::Model do
         price.line_item.should eq item
       end
     end
+
+    describe "has_many" do
+      it "gets the related records" do
+        item = LineItemBox.create
+        scan = ScanBox.new.line_item_id(item.id).create
+
+        LineItemQuery.new.find(item.id).scans.should eq [scan]
+      end
+    end
   end
 end
