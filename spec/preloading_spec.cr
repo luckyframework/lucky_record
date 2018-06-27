@@ -91,6 +91,17 @@ describe "Preloading" do
     end
   end
 
+  it "preloads uuid backed has_many" do
+    with_lazy_load(enabled: false) do
+      item = LineItemBox.create
+      scan = ScanBox.create &.line_item_id(item.id)
+
+      items = LineItem::BaseQuery.new.preload_scans
+
+      items.results.first.scans.should eq([scan])
+    end
+  end
+
   it "works with nested preloads" do
     with_lazy_load(enabled: false) do
       post = PostBox.create
@@ -142,7 +153,7 @@ describe "Preloading" do
     end
   end
 
-  it "preloads uuid associations" do
+  it "preloads uuid belongs_to" do
     item = LineItemBox.create
     price = PriceBox.new.line_item_id(item.id).create
 
