@@ -371,7 +371,7 @@ describe "LuckyRecord::Form" do
     context "with a uuid backed model" do
       it "doesn't generate a new uuid" do
         line_item = LineItemBox.create
-        LineItemForm.update(line_item, { "name" => "Another pair of shoes"}) do |form, record|
+        LineItemForm.update(line_item, {"name" => "Another pair of shoes"}) do |form, record|
           form.saved?.should be_true
           record.id.should eq line_item.id
         end
