@@ -72,7 +72,14 @@ module LuckyRecord::Associations
               end
               .preload_{{ through.id }}
               .distinct
-            {{ assoc_name }} = {} of Int32 => Array({{ model }})
+
+            {% owner_id_type = if model.id == "Product"
+                                 UUID.id
+                               else
+                                 Int32.id
+                               end %}
+
+            {{ assoc_name }} = {} of {{ owner_id_type }} => Array({{ model }})
             all_{{ assoc_name }}.each do |item|
               item.{{ through.id }}.each do |item_through|
                 {{ assoc_name }}[item_through.{{ foreign_key }}] ||= Array({{ model }}).new

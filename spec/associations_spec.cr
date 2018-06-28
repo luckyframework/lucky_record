@@ -107,5 +107,14 @@ describe LuckyRecord::Model do
         LineItemQuery.new.find(item.id).scans.should eq [scan]
       end
     end
+
+    describe "has_many through a join table" do
+      it "gets the related records" do
+        item = LineItemBox.create
+        scan = ScanBox.new.line_item_id(item.id).create
+
+        LineItemQuery.new.find(item.id).scans.should eq [scan]
+      end
+    end
   end
 end
