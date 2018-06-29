@@ -36,7 +36,7 @@ class LuckyRecord::Model
     setup({{table_name}}, {{primary_key_type}})
   end
 
-  macro table()
+  macro table
     {{yield}}
     setup :{{ @type.id.stringify.downcase + "s" }}
   end
