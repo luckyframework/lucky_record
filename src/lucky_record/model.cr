@@ -36,6 +36,11 @@ class LuckyRecord::Model
     setup({{table_name}}, {{primary_key_type}})
   end
 
+  macro table()
+    {{yield}}
+    setup :{{ @type.id.stringify.downcase + "s" }}
+  end
+
   def delete
     LuckyRecord::Repo.run do |db|
       db.exec "DELETE FROM #{@@table_name} WHERE id = #{id}"
