@@ -68,7 +68,7 @@ abstract class LuckyRecord::Form(T)
     %}
   end
 
-  macro add_fields(fields, primary_key_type)
+  macro add_fields(primary_key_type, fields)
     FIELDS = {{ fields }}
 
     private def extract_changes_from_params

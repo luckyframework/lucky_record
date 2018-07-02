@@ -9,7 +9,7 @@ class LuckyRecord::BaseFormTemplate
         :{{ table_name }}
       end
 
-      add_fields({{ fields }}, {{ primary_key_type }})
+      add_fields({{ primary_key_type }}, {{ fields }})
     end
   end
 end
