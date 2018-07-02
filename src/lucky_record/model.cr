@@ -38,7 +38,7 @@ class LuckyRecord::Model
 
   macro table
     {{yield}}
-    setup :{{ @type.id.stringify.downcase + "s" }}
+    setup :{{ @type.id.stringify.underscore + "s" }}
   end
 
   def delete

@@ -43,7 +43,7 @@ private class EmptyModelCompilesOk < LuckyRecord::Model
 end
 
 private class InferredTableNameModel < LuckyRecord::Model
-  COLUMNS = "inferredtablenamemodels.id, inferredtablenamemodels.created_at, inferredtablenamemodels.updated_at"
+  COLUMNS = "inferred_table_name_models.id, inferred_table_name_models.created_at, inferred_table_name_models.updated_at"
 
   table do
   end
@@ -199,6 +199,6 @@ describe LuckyRecord::Model do
 
   it "can infer the table name when omitted" do
     query = InferredTableNameModel::BaseQuery.all
-    query.to_sql.should eq ["SELECT #{InferredTableNameModel::COLUMNS} FROM inferredtablenamemodels"]
+    query.to_sql.should eq ["SELECT #{InferredTableNameModel::COLUMNS} FROM inferred_table_name_models"]
   end
 end
