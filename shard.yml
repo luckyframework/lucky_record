@@ -19,7 +19,7 @@ dependencies:
   habitat:
     github: luckyframework/habitat
   lucky_inflector:
-    gitbug: luckyframework/lucky_inflector
+    github: luckyframework/lucky_inflector
     version: ~> 0.1.1
 
 development_dependencies:
