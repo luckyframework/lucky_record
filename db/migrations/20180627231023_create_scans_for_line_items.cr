@@ -1,9 +1,5 @@
 class CreateScansForLineItems::V20180627231023 < LuckyMigrator::Migration::V1
   def migrate
-    # create :scans do
-    #  add scanned_at : Time
-    #  add line_item_id : UUID
-    # end
     execute <<-SQL
       CREATE TABLE scans (
         id serial PRIMARY KEY,
