@@ -170,13 +170,13 @@ module LuckyRecord::Associations
 
     association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }}, type: {{ model }}, foreign_key: :id
 
-    define_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
-    define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
-    define_preloaded_setter({{ assoc_name }}, {{ model }})
-    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
+    define_belongs_to_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
+    define_belongs_to_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
+    define_belongs_to_preloaded_setter({{ assoc_name }}, {{ model }})
+    define_belongs_to_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
   end
 
-  private macro define_public_preloaded_getters(assoc_name, model, nilable)
+  private macro define_belongs_to_public_preloaded_getters(assoc_name, model, nilable)
     def {{ assoc_name.id }}! : {{ model }}{% if nilable %}?{% end %}
       get_{{ assoc_name.id }}(allow_lazy: true)
     end
@@ -190,14 +190,14 @@ module LuckyRecord::Associations
     getter _preloaded_{{ assoc_name }} : {{ model }}?
   end
 
-  private macro define_preloaded_setter(assoc_name, model)
+  private macro define_belongs_to_preloaded_setter(assoc_name, model)
     def set_preloaded_{{ assoc_name }}(record : {{ model }}?)
       @_{{ assoc_name }}_preloaded = true
       @_preloaded_{{ assoc_name }} = record
     end
   end
 
-  private macro define_private_assoc_getter(assoc_name, model, foreign_key, nilable)
+  private macro define_belongs_to_private_assoc_getter(assoc_name, model, foreign_key, nilable)
     private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
       if _{{ assoc_name }}_preloaded?
         @_preloaded_{{ assoc_name }}{% unless nilable %}.not_nil!{% end %}
@@ -211,7 +211,7 @@ module LuckyRecord::Associations
     end
   end
 
-  private macro define_base_query(assoc_name, model, foreign_key)
+  private macro define_belongs_to_base_query(assoc_name, model, foreign_key)
     class BaseQuery < LuckyRecord::Query
       def preload_{{ assoc_name }}
         preload({{ model }}::BaseQuery.new)
