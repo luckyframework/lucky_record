@@ -1,14 +1,5 @@
 require "./spec_helper"
 
-class KeyHolder < LuckyRecord::Model
-  table users do
-    has_many sign_in_credentials : SignInCredential, foreign_key: :user_id
-  end
-end
-
-class KeyHolderQuery < KeyHolder::BaseQuery
-end
-
 describe LuckyRecord::Model do
   describe "has_many" do
     it "gets the related records" do
