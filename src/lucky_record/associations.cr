@@ -20,7 +20,7 @@ module LuckyRecord::Associations
 
     {% model = type_declaration.type %}
 
-    define_has_many_crap({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
+    define_has_many_lazy_loading({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
   end
 
   macro has_one(type_declaration, foreign_key = nil)
@@ -212,7 +212,7 @@ module LuckyRecord::Associations
     end
   end
 
-  private macro define_has_many_crap(assoc_name, model, foreign_key, through)
+  private macro define_has_many_lazy_loading(assoc_name, model, foreign_key, through)
     @_preloaded_{{ assoc_name }} : Array({{ model }})?
     setter _preloaded_{{ assoc_name }}
 
