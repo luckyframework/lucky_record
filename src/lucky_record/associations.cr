@@ -80,20 +80,7 @@ module LuckyRecord::Associations
 
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
     define_preloaded_setter({{ assoc_name }}, {{ model }})
-
-    private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
-      if _{{ assoc_name }}_preloaded?
-        @_preloaded_{{ assoc_name }}{% unless nilable %}.not_nil!{% end %}
-      elsif lazy_load_enabled? || allow_lazy
-        query = {{ model }}::BaseQuery.new
-        query.{{ foreign_key.id }}(id)
-
-        query.first{% if nilable %}?{% end %}
-      else
-        raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
-      end
-    end
-
+    define_has_one_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
     define_has_one_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
   end
 
@@ -141,6 +128,21 @@ module LuckyRecord::Associations
     def set_preloaded_{{ assoc_name }}(record : {{ model }}?)
       @_{{ assoc_name }}_preloaded = true
       @_preloaded_{{ assoc_name }} = record
+    end
+  end
+
+  private macro define_has_one_private_assoc_getter(assoc_name, model, foreign_key, nilable)
+    private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
+      if _{{ assoc_name }}_preloaded?
+        @_preloaded_{{ assoc_name }}{% unless nilable %}.not_nil!{% end %}
+      elsif lazy_load_enabled? || allow_lazy
+        query = {{ model }}::BaseQuery.new
+        query.{{ foreign_key.id }}(id)
+
+        query.first{% if nilable %}?{% end %}
+      else
+        raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
+      end
     end
   end
 
