@@ -149,7 +149,7 @@ module LuckyRecord::Associations
       end
     end
 
-    define_has_many_base_query({{ assoc_name}}, {{ model }}, {{ foreign_key }})
+    define_has_one_base_query({{ assoc_name}}, {{ model }}, {{ foreign_key }})
   end
 
   macro belongs_to(type_declaration)
@@ -239,7 +239,7 @@ module LuckyRecord::Associations
     end
   end
 
-  private macro define_has_many_base_query(assoc_name, model, foreign_key)
+  private macro define_has_one_base_query(assoc_name, model, foreign_key)
     class BaseQuery < LuckyRecord::Query
       def preload_{{ assoc_name }}
         preload({{ model }}::BaseQuery.new)
