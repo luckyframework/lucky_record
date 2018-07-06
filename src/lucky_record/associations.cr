@@ -56,48 +56,7 @@ module LuckyRecord::Associations
       {% end %}
     end
 
-    class BaseQuery < LuckyRecord::Query
-      def preload_{{ assoc_name }}
-        preload({{ model }}::BaseQuery.new)
-      end
-
-      def preload(preload_query : {{ model }}::BaseQuery)
-        add_preload do |records|
-          ids = records.map(&.id)
-          {% if through %}
-            all_{{ assoc_name }} = preload_query
-              .join_{{ through.id }}
-              .{{ through.id }} do |through_query|
-                through_query.{{ foreign_key.id }}.in(ids)
-              end
-              .preload_{{ through.id }}
-              .distinct
-
-            {% owner_id_type = if model.stringify == "Product"
-                                 UUID.id
-                               else
-                                 Int32.id
-                               end %}
-
-            {{ assoc_name }} = {} of {{ owner_id_type }} => Array({{ model }})
-            all_{{ assoc_name }}.each do |item|
-              item.{{ through.id }}.each do |item_through|
-                {{ assoc_name }}[item_through.{{ foreign_key }}] ||= Array({{ model }}).new
-                {{ assoc_name }}[item_through.{{ foreign_key }}] << item
-              end
-            end
-          {% else %}
-            {{ assoc_name }} = preload_query
-              .{{ foreign_key }}.in(ids)
-              .results.group_by(&.{{ foreign_key }})
-          {% end %}
-          records.each do |record|
-            record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]? || [] of {{ model }}
-          end
-        end
-        self
-      end
-    end
+    define_has_many_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
   end
 
   macro has_one(type_declaration, foreign_key = nil)
@@ -251,6 +210,51 @@ module LuckyRecord::Associations
           {{ assoc_name }} = preload_query.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
           records.each do |record|
             record.set_preloaded_{{ assoc_name }} {{ assoc_name }}[record.id]?.try(&.first?)
+          end
+        end
+        self
+      end
+    end
+  end
+
+  private macro define_has_many_base_query(assoc_name, model, foreign_key, through)
+    class BaseQuery < LuckyRecord::Query
+      def preload_{{ assoc_name }}
+        preload({{ model }}::BaseQuery.new)
+      end
+
+      def preload(preload_query : {{ model }}::BaseQuery)
+        add_preload do |records|
+          ids = records.map(&.id)
+          {% if through %}
+            all_{{ assoc_name }} = preload_query
+              .join_{{ through.id }}
+              .{{ through.id }} do |through_query|
+                through_query.{{ foreign_key.id }}.in(ids)
+              end
+              .preload_{{ through.id }}
+              .distinct
+
+            {% owner_id_type = if model.stringify == "Product"
+                                 UUID.id
+                               else
+                                 Int32.id
+                               end %}
+
+            {{ assoc_name }} = {} of {{ owner_id_type }} => Array({{ model }})
+            all_{{ assoc_name }}.each do |item|
+              item.{{ through.id }}.each do |item_through|
+                {{ assoc_name }}[item_through.{{ foreign_key }}] ||= Array({{ model }}).new
+                {{ assoc_name }}[item_through.{{ foreign_key }}] << item
+              end
+            end
+          {% else %}
+            {{ assoc_name }} = preload_query
+              .{{ foreign_key }}.in(ids)
+              .results.group_by(&.{{ foreign_key }})
+          {% end %}
+          records.each do |record|
+            record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]? || [] of {{ model }}
           end
         end
         self
