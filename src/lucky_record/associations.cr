@@ -9,18 +9,18 @@ module LuckyRecord::Associations
     {% end %}
     {% assoc_name = type_declaration.var %}
 
-    association table_name: :{{ assoc_name }}, type: {{ type_declaration.type }}
-
-    {% model = type_declaration.type %}
-
     {% unless foreign_key %}
       {% foreign_key = "#{@type.name.underscore}_id".id %}
     {% end %}
 
     {% foreign_key = foreign_key.id %}
 
+    association table_name: :{{ assoc_name }}, type: {{ type_declaration.type }}
+    has_many_association table_name: {{ assoc_name }}, type: {{ type_declaration.type }}, foreign_key: {{ foreign_key }}, through: {{ through }}
+
+    {% model = type_declaration.type %}
+
     define_has_many_crap({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
-    define_has_many_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
   end
 
   macro has_one(type_declaration, foreign_key = nil)
@@ -189,11 +189,7 @@ module LuckyRecord::Associations
               .preload_{{ through.id }}
               .distinct
 
-            {% owner_id_type = if model.stringify == "Product"
-                                 UUID.id
-                               else
-                                 Int32.id
-                               end %}
+            {% owner_id_type = model.resolve.constant(:PRIMARY_KEY_TYPE_CLASS) %}
 
             {{ assoc_name }} = {} of {{ owner_id_type }} => Array({{ model }})
             all_{{ assoc_name }}.each do |item|
