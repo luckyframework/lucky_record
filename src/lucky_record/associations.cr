@@ -19,43 +19,7 @@ module LuckyRecord::Associations
 
     {% foreign_key = foreign_key.id %}
 
-    @_preloaded_{{ assoc_name }} : Array({{ model }})?
-    setter _preloaded_{{ assoc_name }}
-
-    def {{ assoc_name.id }} : Array({{ model }})
-      @_preloaded_{{ assoc_name }} \
-      || maybe_lazy_load_{{ assoc_name }} \
-      || raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
-    end
-
-    def {{ assoc_name.id }}! : Array({{ model }})
-      @_preloaded_{{ assoc_name }} || lazy_load_{{ assoc_name }}
-    end
-
-    private def maybe_lazy_load_{{ assoc_name }}  : Array({{ model }})?
-      if lazy_load_enabled?
-        lazy_load_{{ assoc_name }}
-      end
-    end
-
-    private def lazy_load_{{ assoc_name }} : Array({{ model }})
-      {% if through %}
-        {{ model }}::BaseQuery
-          .new
-          .join_{{ through.id }}
-          .{{ through.id }} do |through_query|
-            through_query.{{ foreign_key.id }}(id)
-          end
-          .preload_{{ through.id }}
-          .results
-      {% else %}
-        {{ model }}::BaseQuery
-          .new
-          .{{ foreign_key }}(id)
-          .results
-      {% end %}
-    end
-
+    define_has_many_crap({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
     define_has_many_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ through }})
   end
 
@@ -249,6 +213,45 @@ module LuckyRecord::Associations
         end
         self
       end
+    end
+  end
+
+  private macro define_has_many_crap(assoc_name, model, foreign_key, through)
+    @_preloaded_{{ assoc_name }} : Array({{ model }})?
+    setter _preloaded_{{ assoc_name }}
+
+    def {{ assoc_name.id }} : Array({{ model }})
+      @_preloaded_{{ assoc_name }} \
+      || maybe_lazy_load_{{ assoc_name }} \
+      || raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
+    end
+
+    def {{ assoc_name.id }}! : Array({{ model }})
+      @_preloaded_{{ assoc_name }} || lazy_load_{{ assoc_name }}
+    end
+
+    private def maybe_lazy_load_{{ assoc_name }}  : Array({{ model }})?
+      if lazy_load_enabled?
+        lazy_load_{{ assoc_name }}
+      end
+    end
+
+    private def lazy_load_{{ assoc_name }} : Array({{ model }})
+      {% if through %}
+        {{ model }}::BaseQuery
+          .new
+          .join_{{ through.id }}
+          .{{ through.id }} do |through_query|
+            through_query.{{ foreign_key.id }}(id)
+          end
+          .preload_{{ through.id }}
+          .results
+      {% else %}
+        {{ model }}::BaseQuery
+          .new
+          .{{ foreign_key }}(id)
+          .results
+      {% end %}
     end
   end
 end
