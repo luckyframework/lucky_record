@@ -149,22 +149,7 @@ module LuckyRecord::Associations
       end
     end
 
-    class BaseQuery < LuckyRecord::Query
-      def preload_{{ assoc_name }}
-        preload({{ model }}::BaseQuery.new)
-      end
-
-      def preload(preload_query : {{ model }}::BaseQuery)
-        add_preload do |records|
-          ids = records.map(&.id)
-          {{ assoc_name }} = preload_query.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
-          records.each do |record|
-            record.set_preloaded_{{ assoc_name }} {{ assoc_name }}[record.id]?.try(&.first?)
-          end
-        end
-        self
-      end
-    end
+    define_has_many_base_query({{ assoc_name}}, {{ model }}, {{ foreign_key }})
   end
 
   macro belongs_to(type_declaration)
@@ -247,6 +232,25 @@ module LuckyRecord::Associations
             else
               record.set_preloaded_{{ assoc_name }} nil
             end
+          end
+        end
+        self
+      end
+    end
+  end
+
+  private macro define_has_many_base_query(assoc_name, model, foreign_key)
+    class BaseQuery < LuckyRecord::Query
+      def preload_{{ assoc_name }}
+        preload({{ model }}::BaseQuery.new)
+      end
+
+      def preload(preload_query : {{ model }}::BaseQuery)
+        add_preload do |records|
+          ids = records.map(&.id)
+          {{ assoc_name }} = preload_query.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
+          records.each do |record|
+            record.set_preloaded_{{ assoc_name }} {{ assoc_name }}[record.id]?.try(&.first?)
           end
         end
         self
