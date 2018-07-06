@@ -214,6 +214,10 @@ module LuckyRecord::Associations
       @_preloaded_{{ assoc_name }} = record
     end
 
+    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
+  end
+
+  private macro define_base_query(assoc_name, model, foreign_key)
     class BaseQuery < LuckyRecord::Query
       def preload_{{ assoc_name }}
         preload({{ model }}::BaseQuery.new)
