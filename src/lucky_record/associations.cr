@@ -108,7 +108,7 @@ module LuckyRecord::Associations
       end
     end
 
-    define_has_one_base_query({{ assoc_name}}, {{ model }}, {{ foreign_key }})
+    define_has_one_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
   end
 
   macro belongs_to(type_declaration)
@@ -127,7 +127,9 @@ module LuckyRecord::Associations
 
     column {{ assoc_name.id }}_id : {{ owner_id_type }}{% if nilable %}?{% end %}
 
-    association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }}, type: {{ model }}, foreign_key: :id
+    association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }},
+                type: {{ model }},
+                foreign_key: :id
 
     define_belongs_to_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
     define_belongs_to_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
