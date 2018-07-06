@@ -79,12 +79,7 @@ module LuckyRecord::Associations
     association table_name: :{{ type_declaration.var }}, type: {{ model }}, foreign_key: {{ foreign_key }}
 
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
-
-    def set_preloaded_{{ assoc_name }}(record : {{ model }}?)
-      @_{{ assoc_name }}_preloaded = true
-      @_preloaded_{{ assoc_name }} = record
-    end
-
+    define_preloaded_setter({{ assoc_name }}, {{ model }})
 
     private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
       if _{{ assoc_name }}_preloaded?
@@ -124,7 +119,7 @@ module LuckyRecord::Associations
 
     define_belongs_to_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
-    define_belongs_to_preloaded_setter({{ assoc_name }}, {{ model }})
+    define_preloaded_setter({{ assoc_name }}, {{ model }})
     define_belongs_to_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
   end
 
@@ -142,7 +137,7 @@ module LuckyRecord::Associations
     getter _preloaded_{{ assoc_name }} : {{ model }}?
   end
 
-  private macro define_belongs_to_preloaded_setter(assoc_name, model)
+  private macro define_preloaded_setter(assoc_name, model)
     def set_preloaded_{{ assoc_name }}(record : {{ model }}?)
       @_{{ assoc_name }}_preloaded = true
       @_preloaded_{{ assoc_name }} = record
