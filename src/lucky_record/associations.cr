@@ -193,17 +193,7 @@ module LuckyRecord::Associations
       get_{{ assoc_name.id }}
     end
 
-    private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
-      if _{{ assoc_name }}_preloaded?
-        @_preloaded_{{ assoc_name }}{% unless nilable %}.not_nil!{% end %}
-      elsif lazy_load_enabled? || allow_lazy
-        {{ foreign_key }}.try do |value|
-          {{ model }}::BaseQuery.new.find(value)
-        end
-      else
-        raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
-      end
-    end
+    define_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
 
     @_{{ assoc_name }}_preloaded : Bool = false
     getter? _{{ assoc_name }}_preloaded
@@ -215,6 +205,20 @@ module LuckyRecord::Associations
     end
 
     define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
+  end
+
+  private macro define_private_assoc_getter(assoc_name, model, foreign_key, nilable)
+    private def get_{{ assoc_name.id }}(allow_lazy : Bool = false) : {{ model }}{% if nilable %}?{% end %}
+      if _{{ assoc_name }}_preloaded?
+        @_preloaded_{{ assoc_name }}{% unless nilable %}.not_nil!{% end %}
+      elsif lazy_load_enabled? || allow_lazy
+        {{ foreign_key }}.try do |value|
+          {{ model }}::BaseQuery.new.find(value)
+        end
+      else
+        raise LuckyRecord::LazyLoadError.new {{ @type.name.stringify }}, {{ assoc_name.stringify }}
+      end
+    end
   end
 
   private macro define_base_query(assoc_name, model, foreign_key)
