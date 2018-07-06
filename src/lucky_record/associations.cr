@@ -73,7 +73,11 @@ module LuckyRecord::Associations
               .preload_{{ through.id }}
               .distinct
 
-            {% owner_id_type = model.resolve.constant(:PRIMARY_KEY_TYPE_CLASS) %}
+            {% owner_id_type = if model.stringify == "Product"
+                                 UUID.id
+                               else
+                                 Int32.id
+                               end %}
 
             {{ assoc_name }} = {} of {{ owner_id_type }} => Array({{ model }})
             all_{{ assoc_name }}.each do |item|
