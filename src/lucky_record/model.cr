@@ -147,6 +147,7 @@ class LuckyRecord::Model
   end
 
   macro has_many_association(table_name, type, foreign_key, through)
+    association table_name: :{{ table_name }}, type: {{ type }}
     {% HAS_MANY << {type: type, name: table_name.id, foreign_key: foreign_key, through: through} %}
   end
 end

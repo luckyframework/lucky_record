@@ -15,8 +15,10 @@ module LuckyRecord::Associations
 
     {% foreign_key = foreign_key.id %}
 
-    association table_name: :{{ assoc_name }}, type: {{ type_declaration.type }}
-    has_many_association table_name: {{ assoc_name }}, type: {{ type_declaration.type }}, foreign_key: {{ foreign_key }}, through: {{ through }}
+    has_many_association table_name: {{ assoc_name }},
+      type: {{ type_declaration.type }},
+      foreign_key: {{ foreign_key }},
+      through: {{ through }}
 
     {% model = type_declaration.type %}
 
