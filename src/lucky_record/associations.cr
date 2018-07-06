@@ -185,6 +185,13 @@ module LuckyRecord::Associations
 
     association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }}, type: {{ model }}, foreign_key: :id
 
+    define_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
+    define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
+    define_preloaded_setter({{ assoc_name }}, {{ model }})
+    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
+  end
+
+  private macro define_public_preloaded_getters(assoc_name, model, nilable)
     def {{ assoc_name.id }}! : {{ model }}{% if nilable %}?{% end %}
       get_{{ assoc_name.id }}(allow_lazy: true)
     end
@@ -193,13 +200,6 @@ module LuckyRecord::Associations
       get_{{ assoc_name.id }}
     end
 
-    define_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
-    define_public_preloaded_getters({{ assoc_name }}, {{ model }})
-    define_preloaded_setter({{ assoc_name }}, {{ model }})
-    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
-  end
-
-  private macro define_public_preloaded_getters(assoc_name, model)
     @_{{ assoc_name }}_preloaded : Bool = false
     getter? _{{ assoc_name }}_preloaded
     getter _preloaded_{{ assoc_name }} : {{ model }}?
