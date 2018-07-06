@@ -194,13 +194,15 @@ module LuckyRecord::Associations
     end
 
     define_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
+    define_public_preloaded_getters({{ assoc_name }}, {{ model }})
+    define_preloaded_setter({{ assoc_name }}, {{ model }})
+    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
+  end
 
+  private macro define_public_preloaded_getters(assoc_name, model)
     @_{{ assoc_name }}_preloaded : Bool = false
     getter? _{{ assoc_name }}_preloaded
     getter _preloaded_{{ assoc_name }} : {{ model }}?
-
-    define_preloaded_setter({{ assoc_name }}, {{ model }})
-    define_base_query({{ assoc_name }}, {{ model }}, {{ foreign_key }})
   end
 
   private macro define_preloaded_setter(assoc_name, model)
