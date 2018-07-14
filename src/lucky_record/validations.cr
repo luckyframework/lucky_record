@@ -81,7 +81,7 @@ module LuckyRecord::Validations
     private def build_validation_query(column_name, value) : T::BaseQuery
       query = T::BaseQuery.new.where(column_name, value)
       record.try(&.id).try do |id|
-        query = query.where("#{T::TABLE_NAME}.id != ?", id)
+        query = query.id.not(id)
       end
       query
     end
