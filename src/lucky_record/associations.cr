@@ -43,7 +43,7 @@ module LuckyRecord::Associations
 
     {% foreign_key = foreign_key.id %}
 
-    association table_name: :{{ type_declaration.var }}, type: {{ model }}, foreign_key: {{ foreign_key}}, relationship_type: :has_one
+    association table_name: :{{ type_declaration.var }}, type: {{ model }}, foreign_key: {{ foreign_key }}, relationship_type: :has_one
 
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
     define_preloaded_setter({{ assoc_name }}, {{ model }})
