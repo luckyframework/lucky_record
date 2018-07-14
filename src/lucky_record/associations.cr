@@ -15,10 +15,11 @@ module LuckyRecord::Associations
 
     {% foreign_key = foreign_key.id %}
 
-    has_many_association table_name: {{ assoc_name }},
+    association table_name: :{{ assoc_name }},
       type: {{ type_declaration.type }},
-      foreign_key: {{ foreign_key }},
-      through: {{ through }}
+      foreign_key: :{{ foreign_key }},
+      through: {{ through }},
+      relationship_type: :has_many
 
     {% model = type_declaration.type %}
 
@@ -42,7 +43,7 @@ module LuckyRecord::Associations
 
     {% foreign_key = foreign_key.id %}
 
-    association table_name: :{{ type_declaration.var }}, type: {{ model }}, foreign_key: {{ foreign_key }}
+    association table_name: :{{ type_declaration.var }}, type: {{ model }}, foreign_key: {{ foreign_key}}, relationship_type: :has_one
 
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
     define_preloaded_setter({{ assoc_name }}, {{ model }})
@@ -68,7 +69,8 @@ module LuckyRecord::Associations
 
     association table_name: :{{ model.resolve.constant(:TABLE_NAME).id }},
                 type: {{ model }},
-                foreign_key: :id
+                foreign_key: :id,
+                relationship_type: :belongs_to
 
     define_belongs_to_private_assoc_getter({{ assoc_name }}, {{ model }}, {{ foreign_key }}, {{ nilable }})
     define_public_preloaded_getters({{ assoc_name }}, {{ model }}, {{ nilable }})
