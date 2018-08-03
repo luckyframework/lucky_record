@@ -1,5 +1,5 @@
 class Blob < LuckyRecord::Model
   table blobs do
-    column doc : JSON::Any
+    column doc : JSON::Any?
   end
 end
