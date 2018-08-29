@@ -16,6 +16,7 @@ script:
   - crystal tasks.cr -- db.migrate.one
   - crystal tasks.cr -- db.migrate
   - crystal tasks.cr -- gen.migration TestMigration
+  - DATABASE_URL='psql://127.0.0.1:5432/lucky_record_test' crystal tasks.cr -- db.create
   - crystal spec
   - crystal tool format spec src --check
   - shards build
