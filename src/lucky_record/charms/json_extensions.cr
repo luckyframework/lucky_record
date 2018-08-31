@@ -3,8 +3,6 @@ struct JSON::Any
     alias ColumnType = JSON::Any
     include LuckyRecord::Type
 
-    alias JSONType = Array(JSONType) | Bool | Float64 | Hash(String, JSONType) | Int64 | String | Nil | Int32 | Float32
-
     def self.from_db!(value : JSON::Any)
       value
     end
@@ -13,11 +11,11 @@ struct JSON::Any
       SuccessfulCast(JSON::Any).new value
     end
 
-    def self.parse(value : JSONType)
+    def self.parse(value)
       SuccessfulCast(JSON::Any).new JSON.parse(value.to_json)
     end
 
-    def self.to_db(value : JSONType)
+    def self.to_db(value)
       value.to_json
     end
 
