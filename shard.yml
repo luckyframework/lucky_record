@@ -3,6 +3,10 @@ version: 0.6.0
 
 crystal: 0.25.0
 
+targets:
+  gen.migration:
+    main: src/precompiled_tasks/gen/migration.cr
+
 authors:
   - Paul Smith <paulcsmith0218@gmail.com>
 
@@ -18,13 +22,15 @@ dependencies:
     version: ~> 0.15
   habitat:
     github: luckyframework/habitat
+    version: ~> 0.4.0
   lucky_inflector:
     github: luckyframework/lucky_inflector
     version: ~> 0.1.1
 
-development_dependencies:
-  lucky_migrator:
-    github: tzar/lucky_migrator
-    branch: master
+scripts:
+  postinstall: |
+    shards build
+    mkdir -p ../../bin/lucky/gen
+    cp $(pwd)/bin/gen.migration $(pwd)/../../bin/lucky/gen/migration
 
 license: MIT
