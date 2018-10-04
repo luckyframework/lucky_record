@@ -1,9 +1,15 @@
 require "./spec_helper"
 
 macro should_negate(original_where, expected_negated_where)
-  clause = {{original_where}}.new("column", "value").negated
+  {% if original_where.resolve < LuckyRecord::Where::ComparativeSqlClause %}
+    clause = {{original_where}}.new("column", "value").negated
+  {% else %}
+    clause = {{original_where}}.new("column").negated
+  {% end %}
   clause.column.should eq "column"
-  clause.value.should eq "value"
+  {% if original_where.resolve < LuckyRecord::Where::ComparativeSqlClause %}
+    clause.value.should eq "value"
+  {% end %}
   clause.should be_a({{expected_negated_where}})
 end
 
@@ -21,5 +27,6 @@ describe LuckyRecord::Where do
     should_negate(LuckyRecord::Where::NotIlike, LuckyRecord::Where::Ilike)
     should_negate(LuckyRecord::Where::In, LuckyRecord::Where::NotIn)
     should_negate(LuckyRecord::Where::NotIn, LuckyRecord::Where::In)
+    should_negate(LuckyRecord::Where::Null, LuckyRecord::Where::NotNull)
   end
 end

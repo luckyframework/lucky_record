@@ -22,8 +22,9 @@ describe "LuckyRecord::QueryBuilder" do
     query = new_query
       .where(LuckyRecord::Where::Equal.new(:name, "Paul"))
       .where(LuckyRecord::Where::GreaterThan.new(:age, "20"))
+      .where(LuckyRecord::Where::Null.new(:nickname))
       .limit(1)
-    query.statement.should eq "SELECT * FROM users WHERE name = $1 AND age > $2 LIMIT 1"
+    query.statement.should eq "SELECT * FROM users WHERE name = $1 AND age > $2 AND nickname IS NULL LIMIT 1"
     query.args.should eq ["Paul", "20"]
   end
 
