@@ -16,7 +16,20 @@ class LuckyRecord::Criteria(T, V)
     rows
   end
 
+  def is(_value : Nil)
+    {{ raise "Use `is?` instead of `is` if trying to check against nillable value." }}
+  end
+
   def is(value)
+    is?(value)
+  end
+
+  def is?(_value : Nil)
+    add_clause(LuckyRecord::Where::Null.new(column))
+    rows
+  end
+
+  def is?(value)
     add_clause(LuckyRecord::Where::Equal.new(column, V::Lucky.to_db!(value)))
     rows
   end
@@ -32,6 +45,18 @@ class LuckyRecord::Criteria(T, V)
 
   def is_not(value) : T
     add_clause(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
+  end
+
+  def is_not(_value : Nil)
+    {{ raise "Use `is_not?` instead of `is_not` if trying to check against nillable value." }}
+  end
+
+  def is_not?(value) : T
+    add_clause(LuckyRecord::Where::NotEqual.new(column, V::Lucky.to_db!(value)))
+  end
+
+  def is_not?(_value : Nil) : T
+    add_clause(LuckyRecord::Where::NotNull.new(column))
   end
 
   def gt(value) : T
