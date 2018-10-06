@@ -47,7 +47,13 @@ module LuckyRecord::Virtual
 
     {% type = type_declaration.type %}
     {% name = type_declaration.var %}
-    {% default_value = type_declaration.value %}
+    {%
+      default_value = if type_declaration.value.is_a?(Nop)
+                        nil
+                      else
+                        type_declaration.value
+                      end
+    %}
     @_{{ name }} : LuckyRecord::Field({{ type }}?)?
 
     ensure_base_virtual_fields_method_is_present
@@ -64,7 +70,7 @@ module LuckyRecord::Virtual
       @_{{ name }} ||= LuckyRecord::Field({{ type }}?).new(
         name: :{{ name }},
         param: {{ name }}_param,
-        value: {{ default_value || nil }},
+        value: {{ default_value }},
         form_name: form_name
       ).tap do |field|
         if {{ name }}_param_given?
