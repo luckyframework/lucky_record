@@ -48,7 +48,6 @@ module LuckyRecord::Queryable(T)
   end
 
   def distinct_on(&block)
-    query.distinct
     criteria = yield self
     criteria.distinct_on
     self
