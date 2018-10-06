@@ -22,6 +22,13 @@ describe LuckyRecord::Query do
     query.args.should eq [] of String
   end
 
+  it "can select distinct on a specific column" do
+    query = UserQuery.new.distinct_on(&.name).query
+
+    query.statement.should eq "SELECT DISTINCT ON (users.name) #{User::COLUMNS} FROM users"
+    query.args.should eq [] of String
+  end
+
   describe ".first" do
     it "gets the first row from the database" do
       UserBox.new.name("First").create
