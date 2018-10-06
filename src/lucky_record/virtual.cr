@@ -64,7 +64,7 @@ module LuckyRecord::Virtual
       @_{{ name }} ||= LuckyRecord::Field({{ type }}?).new(
         name: :{{ name }},
         param: {{ name }}_param,
-        value: {% if default_value %}{{ default_value }}{% else %}nil{% end %},
+        value: {{ default_value || nil }},
         form_name: form_name
       ).tap do |field|
         if {{ name }}_param_given?
