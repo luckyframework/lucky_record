@@ -4,6 +4,8 @@ crystal:
   - nightly
 services:
   - postgresql
+addons:
+  postgresql: '9.4'
 install:
   - shards install
 matrix:
