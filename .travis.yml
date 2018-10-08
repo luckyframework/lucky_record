@@ -21,3 +21,5 @@ script:
   - shards build
 notifications:
   email: false
+addons:
+  postgresql: "9.4"
