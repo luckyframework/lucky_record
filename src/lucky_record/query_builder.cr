@@ -73,9 +73,12 @@ class LuckyRecord::QueryBuilder
   end
 
   def distinct_on(column)
-    @distinct = true
     @distinct_on = column
     self
+  end
+
+  private def distinct?
+    @distinct || @distinct_on
   end
 
   def limit(amount)
@@ -173,7 +176,7 @@ class LuckyRecord::QueryBuilder
   private def select_sql
     String.build do |sql|
       sql << "SELECT "
-      sql << "DISTINCT " if @distinct
+      sql << "DISTINCT " if distinct?
       sql << "ON (#{@distinct_on}) " if @distinct_on
       sql << @selections
       sql << " FROM "
