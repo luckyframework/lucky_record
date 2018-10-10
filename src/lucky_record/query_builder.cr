@@ -72,7 +72,7 @@ class LuckyRecord::QueryBuilder
     self
   end
 
-  def distinct_on(column)
+  def distinct_on(column : Symbol | String)
     @distinct_on = column
     self
   end
