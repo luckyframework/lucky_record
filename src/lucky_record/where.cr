@@ -25,7 +25,6 @@ module LuckyRecord::Where
     end
   end
 
-
   class Null < NullSqlClause
     def operator
       "IS"
