@@ -3,5 +3,6 @@
 set -e
 
 shards install
+lucky db.drop
 lucky db.create
 lucky db.migrate
