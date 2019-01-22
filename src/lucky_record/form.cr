@@ -69,7 +69,8 @@ abstract class LuckyRecord::Form(T)
   end
 
   macro add_fields(primary_key_type, fields)
-    FIELDS = {{ fields }}
+    FIELDS          = {{ fields }}
+    FILLABLE_FIELDS = {{ fields.map { |field| field[:name].id } }}
 
     private def extract_changes_from_params
       fillable_params.each do |key, value|
@@ -214,6 +215,7 @@ abstract class LuckyRecord::Form(T)
         end
 
         @@fillable_param_keys << "{{ field_name.id }}"
+        {% FILLABLE_FIELDS << field_name.id %}
       {% else %}
         {% raise <<-ERROR
           Can't make '#{field_name}' fillable because the column has not been defined on the model.

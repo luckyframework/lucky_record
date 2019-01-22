@@ -68,13 +68,13 @@ module LuckyRecord::NeedyInitializerAndSaveMethods
       {% for type_declaration in (NEEDS_ON_CREATE + NEEDS_ON_INITIALIZE) %}
         {{ type_declaration }},
       {% end %}
-      {% if @type.constant :FIELDS %}
-        {% for field in FIELDS %}
+      {% for field_id in FILLABLE_FIELDS %}
+        {% if FIELDS.any? { |field| field[:name].id.stringify == field_id.stringify } %}
           {{ field[:name] }} : {{ field[:type] }} | Nothing{% if field[:nilable] %} | Nil{% end %} = Nothing.new,
         {% end %}
       {% end %}
       {% for field in VIRTUAL_FIELDS %}
-        {{ field.var }} : {{ field.type }} | Nothing = Nothing.new,
+        {{ field.var }} : {{ field.type }} | Nothing{% if field.type.is_a?(Union).id %} | Nil{% end %} = Nothing.new,
       {% end %}
     )
       form = new(
@@ -87,12 +87,18 @@ module LuckyRecord::NeedyInitializerAndSaveMethods
         form.{{ type_declaration.var }} = {{ type_declaration.var }}
       {% end %}
 
-      {% if @type.constant :FIELDS %}
-        {% for field in FIELDS %}
+      {% for field_id in FILLABLE_FIELDS %}
+        {% if FIELDS.any? { |field| field[:name].id.stringify == field_id.stringify } %}
           unless {{ field[:name] }}.is_a? Nothing
-            form.{{ field[:name] }}.value = {{ field[:name] }}
+            form.{{ field[:name] }}.value = {{ field[:name] }} {% if field[:nilable] %} if {{ field[:name] }} {% end %}
           end
         {% end %}
+      {% end %}
+
+      {% for field in VIRTUAL_FIELDS %}
+        unless {{ field.var }}.is_a? Nothing
+          form.{{ field.var }}.value = {{ field.var }} {% if field.type.is_a?(Union).id %} if {{ field.var }} {% end %}
+        end
       {% end %}
 
       {% if with_bang %}
@@ -114,13 +120,13 @@ module LuckyRecord::NeedyInitializerAndSaveMethods
         {% for type_declaration in (NEEDS_ON_UPDATE + NEEDS_ON_INITIALIZE) %}
           {{ type_declaration }},
         {% end %}
-        {% if @type.constant :FIELDS %}
-          {% for field in FIELDS %}
+        {% for field_id in FILLABLE_FIELDS %}
+          {% if FIELDS.any? { |field| field[:name].id.stringify == field_id.stringify } %}
             {{ field[:name] }} : {{ field[:type] }} | Nothing{% if field[:nilable] %} | Nil{% end %} = Nothing.new,
           {% end %}
         {% end %}
         {% for field in VIRTUAL_FIELDS %}
-          {{ field.var }} : {{ field.type }} | Nothing = Nothing.new,
+          {{ field.var }} : {{ field.type }} | Nothing{% if field.type.is_a?(Union).id %} | Nil{% end %} = Nothing.new,
         {% end %}
       )
       form = new(
@@ -134,12 +140,18 @@ module LuckyRecord::NeedyInitializerAndSaveMethods
         form.{{ type_declaration.var }} = {{ type_declaration.var }}
       {% end %}
 
-      {% if @type.constant :FIELDS %}
-        {% for field in FIELDS %}
+      {% for field_id in FILLABLE_FIELDS %}
+        {% if FIELDS.any? { |field| field[:name].id.stringify == field_id.stringify } %}
           unless {{ field[:name] }}.is_a? Nothing
-            form.{{ field[:name] }}.value = {{ field[:name] }}
+            form.{{ field[:name] }}.value = {{ field[:name] }} {% if field[:nilable] %} if {{ field[:name] }} {% end %}
           end
         {% end %}
+      {% end %}
+
+      {% for field in VIRTUAL_FIELDS %}
+        unless {{ field.var }}.is_a? Nothing
+          form.{{ field.var }}.value = {{ field.var }} {% if field.type.is_a?(Union).id %} if {{ field.var }} {% end %}
+        end
       {% end %}
 
       {% if with_bang %}
