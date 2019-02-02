@@ -3,6 +3,8 @@ class LuckyRecord::BaseFormTemplate
     class BaseForm < LuckyRecord::Form({{ model_type }})
       macro inherited
         FOREIGN_KEY = "{{ model_type.stringify.underscore.id }}_id"
+        FIELDS          = {{ fields }}
+        FILLABLE_FIELDS = [] of String
       end
 
       def table_name
