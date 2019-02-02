@@ -73,6 +73,10 @@ module LuckyRecord::Queryable(T)
     self
   end
 
+  def empty?
+    size.zero?
+  end
+
   def none
     query.where(LuckyRecord::Where::Equal.new("1", "0"))
     self

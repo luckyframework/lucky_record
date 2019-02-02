@@ -289,6 +289,12 @@ describe LuckyRecord::Query do
     end
   end
 
+  describe "#empty?" do
+    query = UserQuery.new
+
+    query.empty?.should be_true
+  end
+
   describe "#none" do
     it "returns 0 records" do
       UserBox.create
