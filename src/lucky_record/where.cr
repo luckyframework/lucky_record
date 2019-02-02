@@ -2,7 +2,7 @@ module LuckyRecord::Where
   abstract class SqlClause
     getter :column, :value
 
-    def initialize(@column : Symbol | String, @value : String | Array(String) | Array(Int32))
+    def initialize(@column : Symbol | String, @value : String | Int32 | Nil | Array(String) | Array(Int32))
     end
 
     abstract def operator : String
